@@ -6,7 +6,7 @@ import {
 import LoginPage from "./Pages/LoginPage";
 import SignUpPage from "./Pages/SignUpPage";
 import UserDashboard from "./Components/UserDashboard";
-import WasteManagementDashboard from "./Components/WasteManagementDashboard";
+import Dashboard from "./Components/WasteManagementDashboard";
 
 const router = createBrowserRouter([
   {
@@ -27,7 +27,7 @@ const router = createBrowserRouter([
   },
     {
     path: "/manager",
-    element: <WasteManagementDashboard />,
+    element: <Dashboard />,
   },
 ]);
 
