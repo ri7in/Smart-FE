@@ -4,30 +4,46 @@ import { FaUser, FaLock } from 'react-icons/fa';
 import Input from '../Components/Input';
 import Button from '../Components/Button';
 import ForgotPasswordModal from '../Components/ForgotPasswordModal';
+import bgImage from '../assets/bglogin.png'; // Import the background image
+import { useNavigate } from 'react-router-dom'; // Use useNavigate
 
 const LoginPage: React.FC = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const navigate = useNavigate(); // Initialize useNavigate
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle login logic here
+    // Here you would handle your login logic, e.g., API call
+    // If login is successful, redirect to /user
+    navigate('/user'); // Redirect to user page
+  };
+
+  const handleSignup = () => {
+    navigate('/signup'); // Redirect to signup page
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-400 to-green-600 flex flex-col items-center justify-center px-4">
+    <div
+      className="min-h-screen flex items-center justify-center px-4"
+      style={{
+        backgroundImage: `url(${bgImage})`, // Use the imported image
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+      }}
+    >
       <motion.div
-        //className="max-w-md w-full space-y-8 bg-white p-10 rounded-xl shadow-2xl"   White card was removed
+        className="bg-white bg-opacity-10 backdrop-blur-md rounded-lg shadow-lg p-8 w-full max-w-md"
         initial={{ opacity: 0, y: -50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <div>
-          <h1 className="text-4xl font-extrabold text-center text-white">SmartBin</h1>
-          <h2 className="text-center text-2xl font-bold text-gray-900 text-white ">Sign in to your account</h2>
+        <div className="text-center mb-6">
+          <h1 className="text-4xl font-bold text-white">SmartBin</h1> {/* Changed to font-bold */}
+          <h2 className="text-xl font-medium text-white">Sign in to your account</h2> {/* Changed to font-medium */}
         </div>
-        <form className="mt-8 space-y-6" onSubmit={handleLogin}>
+        <form className="space-y-6" onSubmit={handleLogin}>
           <Input
             type="text"
             placeholder="Username"
@@ -42,18 +58,24 @@ const LoginPage: React.FC = () => {
             onChange={(e) => setPassword(e.target.value)}
             icon={<FaLock className="text-gray-400" />}
           />
-          <div>
-            <Button className="w-full py-3 px-4 text-lg" type="submit">
-              Sign In
-            </Button>
-          </div>
+          <Button className="w-full py-3 text-lg bg-green-600 text-white hover:bg-green-700 transition duration-200" type="submit">
+            Sign In
+          </Button>
         </form>
         <div className="text-center mt-4">
           <button
             onClick={() => setIsModalOpen(true)}
-            className="text-green-600 hover:text-green-800 font-medium focus:outline-none"
+            className="text-white hover:text-green-300 font-medium focus:outline-none"
           >
             Forgot your password?
+          </button>
+        </div>
+        <div className="text-center mt-4">
+          <button
+            onClick={handleSignup}
+            className="text-white hover:text-green-300 font-medium focus:outline-none"
+          >
+            New User? Sign Up
           </button>
         </div>
       </motion.div>
