@@ -1,13 +1,20 @@
 import React, { useState } from 'react';
-import { Search, Bell, Settings, Home, Users, FileText } from 'lucide-react';
+import { Home, Users, FileText, BarChart as BarChartIcon, PieChart as PieChartIcon, Bell, Search, Settings } from 'lucide-react';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+import ReportsPage from '../Pages/ReportsPage';
 
-const Sidebar = () => (
-  <div className="bg-[#157145] text-white h-screen w-64 p-4">
+interface SidebarProps {
+  activeTab: string;
+  setActiveTab: (tab: string) => void;
+}
+
+const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => (
+  <div className="bg-[#157145] text-white h-screen w-64 p-4 flex flex-col">
     <h1 className="text-2xl font-bold mb-8">SmartBin</h1>
-    <nav>
-      <SidebarItem icon={<Home />} text="Dashboard" active />
-      <SidebarItem icon={<Users />} text="Residents" />
-      <SidebarItem icon={<FileText />} text="Reports" />
+    <nav className="flex-grow">
+      <SidebarItem icon={<Home />} text="Dashboard" active={activeTab === 'dashboard'} onClick={() => setActiveTab('dashboard')} />
+      <SidebarItem icon={<Users />} text="Residents" active={activeTab === 'residents'} onClick={() => setActiveTab('residents')} />
+      <SidebarItem icon={<FileText />} text="Reports" active={activeTab === 'reports'} onClick={() => setActiveTab('reports')} />
     </nav>
   </div>
 );
@@ -15,17 +22,21 @@ const Sidebar = () => (
 interface SidebarItemProps {
   icon: React.ReactNode;
   text: string;
-  active?: boolean;
+  active: boolean;
+  onClick: () => void;
 }
 
-const SidebarItem: React.FC<SidebarItemProps> = ({ icon, text, active }) => (
-  <div className={`flex items-center p-2 rounded mb-2 ${active ? 'bg-green-600' : 'hover:bg-green-600'}`}>
+const SidebarItem: React.FC<SidebarItemProps> = ({ icon, text, active, onClick }) => (
+  <div 
+    className={`flex items-center p-2 rounded mb-2 cursor-pointer transition-colors duration-200 ${active ? 'bg-green-600' : 'hover:bg-green-600'}`}
+    onClick={onClick}
+  >
     {icon}
     <span className="ml-2">{text}</span>
   </div>
 );
 
-const Header = () => {
+const Header: React.FC = () => {
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
 
@@ -90,140 +101,151 @@ const Header = () => {
 interface StatCardProps {
   title: string;
   value: string | number;
+  icon: React.ReactNode;
 }
 
-const StatCard: React.FC<StatCardProps> = ({ title, value }) => (
-  <div className="bg-green-100 p-4 rounded-lg text-center shadow h-full">
-    <h3 className="text-sm font-medium text-green-800">{title}</h3>
-    <p className="text-xl font-bold text-green-700">{value}</p>
+const StatCard: React.FC<StatCardProps> = ({ title, value, icon }) => (
+  <div className="bg-white p-4 rounded-lg shadow-md flex items-center justify-between transition-all duration-300 hover:shadow-lg">
+    <div>
+      <h3 className="text-sm font-medium text-gray-500">{title}</h3>
+      <p className="text-xl font-bold text-gray-800 mt-1">{value}</p>
+    </div>
+    <div className="text-green-500">{icon}</div>
   </div>
 );
 
-const WasteAnalysis = () => (
-  <div className="bg-white p-4 rounded-lg shadow">
-    <h2 className="text-lg font-semibold mb-4">Waste Analysis</h2>
-    <div className="flex items-end space-x-1">
-      <div className="bg-green-300 h-20 w-1/6"></div>
-      <div className="bg-blue-300 h-10 w-1/6"></div>
-      <div className="bg-yellow-300 h-15 w-1/6"></div>
-      <div className="bg-cyan-300 h-8 w-1/6"></div>
-      <div className="bg-purple-300 h-5 w-1/6"></div>
-    </div>
-    <div className="flex justify-between mt-2 text-sm">
-      <span>Food Waste</span>
-      <span>Paper Waste</span>
-      <span>Plastic Waste</span>
-      <span>Recyclable Waste</span>
-      <span>Other Waste</span>
-    </div>
-  </div>
-);
+interface WasteAnalysisProps {
+  data: Array<{ name: string; value: number; color: string }>;
+}
 
-const ResidentTable = () => (
-  <div className="bg-white p-4 rounded-lg shadow max-h-64 overflow-y-auto">
-    <h2 className="text-lg font-semibold mb-4">Residents Overview</h2>
-    <table className="min-w-full bg-white">
-      <thead>
-        <tr>
-          <th className="border px-4 py-2 text-left">Name</th>
-          <th className="border px-4 py-2 text-left">Address</th>
-          <th className="border px-4 py-2 text-left">Waste Habits</th>
-        </tr>
-      </thead>
-      <tbody>
-        {[
-          { name: 'John Doe', address: '123 Main St', habits: 'Regular' },
-          { name: 'Jane Smith', address: '456 Oak St', habits: 'High' },
-          { name: 'Saman Perera', address: '789 Pine St', habits: 'Low' },
-          { name: 'Nimal Kumara', address: '101 Maple St', habits: 'Regular' },
-          { name: 'Kumara Silva', address: '202 Elm St', habits: 'High' },
-          { name: 'Anushka Dias', address: '303 Cedar St', habits: 'Regular' },
-          { name: 'Dilshan Fernando', address: '404 Birch St', habits: 'Low' },
-        ].map((resident, index) => (
-          <tr key={index} className="cursor-pointer hover:bg-gray-100" onClick={() => alert(`Navigate to details for ${resident.name}`)}>
-            <td className="border px-4 py-2">{resident.name}</td>
-            <td className="border px-4 py-2">{resident.address}</td>
-            <td className="border px-4 py-2">{resident.habits}</td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  </div>
-);
-
-const BillingSettings = () => {
-  const [billingModel, setBillingModel] = useState('flat');
-  const [flatFee, setFlatFee] = useState('1000');
-  const [perKgPrice, setPerKgPrice] = useState('10');
-  const [recyclableRate, setRecyclableRate] = useState('5');
-
-  const handlePriceChange = (setter: React.Dispatch<React.SetStateAction<string>>) => (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = Math.max(0, Number(event.target.value)); // Prevent negative values
-    setter(value.toString());
-  };
-
-  return (
-    <div className="bg-white p-4 rounded-lg shadow">
-      <h2 className="text-lg font-semibold mb-4">Billing Settings</h2>
-      <div className="flex flex-col space-y-2">
-        <div>
-          <h3 className="text-sm font-medium">Billing Model</h3>
-          <select value={billingModel} onChange={(e) => setBillingModel(e.target.value)} className="border rounded w-full p-2">
-            <option value="flat">Flat Fee</option>
-            <option value="per_kg">Price Per kg</option>
-          </select>
-        </div>
-        {billingModel === 'flat' ? (
-          <div>
-            <h3 className="text-sm font-medium">Set Price (LKR)</h3>
-            <input type="number" value={flatFee} onChange={handlePriceChange(setFlatFee)} className="border rounded w-full p-2" />
-          </div>
-        ) : (
-          <div>
-            <h3 className="text-sm font-medium">Price Per kg (LKR)</h3>
-            <input type="number" value={perKgPrice} onChange={handlePriceChange(setPerKgPrice)} className="border rounded w-full p-2" />
-          </div>
-        )}
-        <div>
-          <h3 className="text-sm font-medium">Recyclable Rate (LKR)</h3>
-          <input type="number" value={recyclableRate} onChange={handlePriceChange(setRecyclableRate)} className="border rounded w-full p-2" />
-        </div>
-      </div>
-    </div>
-  );
-};
-
-const InquiriesList = () => {
-  const [inquiries, setInquiries] = useState([
-    { id: 1, text: 'Broken bin at Main St.', resolved: false },
-    { id: 2, text: 'Missed collection on Monday.', resolved: false },
-    { id: 3, text: 'Request for additional bin.', resolved: false },
-    { id: 4, text: 'Complaint about collection timing.', resolved: false },
-  ]);
-
-  const resolveInquiry = (id: number) => {
-    setInquiries(inquiries.map(inquiry => inquiry.id === id ? { ...inquiry, resolved: true } : inquiry));
-  };
-
-  return (
-    <div className="bg-white p-4 rounded-lg shadow max-h-64 overflow-y-auto">
-      <h2 className="text-lg font-semibold mb-4">Inquiries</h2>
-      {inquiries.map(inquiry => (
-        <div key={inquiry.id} className={`flex justify-between items-center p-2 ${inquiry.resolved ? 'bg-gray-200' : 'hover:bg-gray-100 cursor-pointer'}`}>
-          <span className={inquiry.resolved ? 'text-green-600' : ''}>
-            {inquiry.resolved ? 'Completed' : inquiry.text}
-          </span>
-          {!inquiry.resolved && (
-            <button onClick={() => resolveInquiry(inquiry.id)} className="bg-green-500 text-white px-2 rounded">Resolve</button>
-          )}
+const WasteAnalysis: React.FC<WasteAnalysisProps> = ({ data }) => (
+  <div className="bg-white p-4 rounded-lg shadow-md">
+    <h2 className="text-lg font-semibold mb-4 text-gray-800">Waste Analysis</h2>
+    <ResponsiveContainer width="100%" height={200}>
+      <PieChart>
+        <Pie
+          data={data}
+          cx="50%"
+          cy="50%"
+          innerRadius={60}
+          outerRadius={80}
+          fill="#8884d8"
+          paddingAngle={5}
+          dataKey="value"
+        >
+          {data.map((entry, index) => (
+            <Cell key={`cell-${index}`} fill={entry.color} />
+          ))}
+        </Pie>
+        <Tooltip />
+      </PieChart>
+    </ResponsiveContainer>
+    <div className="flex justify-between mt-4">
+      {data.map((item, index) => (
+        <div key={index} className="flex items-center">
+          <div className={`w-3 h-3 rounded-full mr-2`} style={{ backgroundColor: item.color }}></div>
+          <span className="text-xs text-gray-600">{item.name}</span>
         </div>
       ))}
     </div>
+  </div>
+);
+
+interface CollectionTrendsProps {
+  data: Array<{ name: string; collections: number }>;
+}
+
+const CollectionTrends: React.FC<CollectionTrendsProps> = ({ data }) => (
+  <div className="bg-white p-4 rounded-lg shadow-md">
+    <h2 className="text-lg font-semibold mb-4 text-gray-800">Collection Trends</h2>
+    <ResponsiveContainer width="100%" height={200}>
+      <BarChart data={data}>
+        <XAxis dataKey="name" />
+        <YAxis />
+        <Tooltip />
+        <Bar dataKey="collections" fill="#82ca9d" />
+      </BarChart>
+    </ResponsiveContainer>
+  </div>
+);
+
+interface ResidentTableProps {
+  residents: Array<{ name: string; address: string; habits: string }>;
+  onSeeAll?: () => void;
+}
+
+const ResidentTable: React.FC<ResidentTableProps> = ({ residents, onSeeAll }) => {
+  // Make sure to use both residents and onSeeAll in the component
+  return (
+    <div className="bg-white p-4 rounded-lg shadow-md">
+      <h2 className="text-lg font-semibold mb-4 text-gray-800">Recent Residents</h2>
+      <ul className="space-y-2">
+        {residents.slice(0, 5).map((resident, index) => (
+          <li key={index} className="text-sm text-gray-600">{resident.name} - {resident.address}</li>
+        ))}
+      </ul>
+      {onSeeAll && (
+        <button onClick={onSeeAll} className="mt-4 text-sm text-blue-600 hover:text-blue-800">
+          See all residents
+        </button>
+      )}
+    </div>
   );
 };
 
-const Dashboard = () => {
-  // Sample hardcoded data; replace this with your database queries later
+// const BillingSettings: React.FC = () => {
+//   const [billingModel, setBillingModel] = useState('flat');
+//   const [flatFee, setFlatFee] = useState('1000');
+//   const [perKgPrice, setPerKgPrice] = useState('10');
+//   const [recyclableRate, setRecyclableRate] = useState('5');
+
+//   const handlePriceChange = (setter: React.Dispatch<React.SetStateAction<string>>) => (event: React.ChangeEvent<HTMLInputElement>) => {
+//     const value = Math.max(0, Number(event.target.value));
+//     setter(value.toString());
+//   };
+
+//   return (
+//     <div className="bg-white p-4 rounded-lg shadow-md">
+//       {/* BillingSettings content */}
+//     </div>
+//   );
+// };
+
+interface InquiriesListProps {
+  inquiries: Array<{ id: number; text: string; resolved: boolean }>;
+  onSeeAll?: () => void;
+}
+
+const InquiriesList: React.FC<InquiriesListProps> = ({ inquiries, onSeeAll }) => {
+  return (
+    <div className="bg-white p-4 rounded-lg shadow-md">
+      <h2 className="text-lg font-semibold mb-4 text-gray-800">Recent Inquiries</h2>
+      <ul className="space-y-2">
+        {inquiries.slice(0, 5).map((inquiry) => (
+          <li key={inquiry.id} className="flex items-center justify-between">
+            <span className="text-sm text-gray-600">{inquiry.text}</span>
+            <span className={`text-xs px-2 py-1 rounded ${inquiry.resolved ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>
+              {inquiry.resolved ? 'Resolved' : 'Pending'}
+            </span>
+          </li>
+        ))}
+      </ul>
+      {onSeeAll && (
+        <button onClick={onSeeAll} className="mt-4 text-sm text-blue-600 hover:text-blue-800">
+          See all inquiries
+        </button>
+      )}
+    </div>
+  );
+};
+
+const Dashboard: React.FC = () => {
+  const [activeTab, setActiveTab] = useState('dashboard');
+  const [showAllResidents, setShowAllResidents] = useState(false);
+  const [showAllInquiries, setShowAllInquiries] = useState(false);
+
+
+// Sample hardcoded data; replace this with your database queries later
   const stats = {
     totalResidents: 300,
     totalBins: 150,
@@ -231,37 +253,118 @@ const Dashboard = () => {
     totalWasteCollected: 1800, // in kg
     totalEarnings: 45000, // in LKR
     unpaidBills: 10,
+    averageWaste: 12, // in kg
     averageWastePerBin: (1800 / 150).toFixed(2), // in kg
+    recyclingRate: 25, // percentage
+    monthlyCollectionRate: 95, // percentage
     upcomingSpecialCollections: 5,
   };
 
-  return (
+  const wasteAnalysisData = [
+    { name: 'Food Waste', value: 40, color: '#FF8042' },
+    { name: 'Paper Waste', value: 20, color: '#00C49F' },
+    { name: 'Plastic Waste', value: 25, color: '#FFBB28' },
+    { name: 'Metal Waste', value: 10, color: '#0088FE' },
+    { name: 'Other Waste', value: 5, color: '#FF6384' },
+  ];
+
+  const collectionTrendsData = [
+    { name: 'Mon', collections: 25 },
+    { name: 'Tue', collections: 30 },
+    { name: 'Wed', collections: 28 },
+    { name: 'Thu', collections: 32 },
+    { name: 'Fri', collections: 35 },
+    { name: 'Sat', collections: 20 },
+    { name: 'Sun', collections: 15 },
+  ];
+
+  const residents = [
+    { name: 'John Doe', address: '123 Main St', habits: 'Regular' },
+    { name: 'Jane Smith', address: '456 Oak St', habits: 'High' },
+    { name: 'Saman Perera', address: '789 Pine St', habits: 'Low' },
+    { name: 'Nimal Kumara', address: '101 Maple St', habits: 'Regular' },
+    { name: 'Kumara Silva', address: '202 Elm St', habits: 'High' },
+    { name: 'Anushka Dias', address: '303 Cedar St', habits: 'Regular' },
+    { name: 'Dilshan Fernando', address: '404 Birch St', habits: 'Low' },
+  ];
+
+  const inquiries = [
+    { id: 1, text: 'Broken bin at Main St.', resolved: false },
+    { id: 2, text: 'Missed collection on Monday.', resolved: false },
+    { id: 3, text: 'Request for additional bin.', resolved: false },
+    { id: 4, text: 'Complaint about collection timing.', resolved: false },
+    { id: 5, text: 'Recycling information needed.', resolved: false },
+    { id: 6, text: 'Billing discrepancy report.', resolved: false },
+    { id: 7, text: 'Special collection request.', resolved: false },
+  ];
+
+return (
     <div className="flex h-screen bg-gray-100">
-      <Sidebar />
+      <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
       <div className="flex-1 flex flex-col overflow-hidden">
         <Header />
-        <main className="flex-1 overflow-x-hidden overflow-y-auto p-4">
-          <h1 className="text-2xl font-semibold mb-4">Good Afternoon, Waste Management Personnel!</h1>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-            <StatCard title="Total Residents" value={stats.totalResidents} />
-            <StatCard title="Total Bins" value={stats.totalBins} />
-            <StatCard title="Total Collections" value={stats.totalCollections} />
-            <StatCard title="Total Waste Collected" value={`${stats.totalWasteCollected} kg`} />
-            <StatCard title="Total Earnings (LKR)" value={`${stats.totalEarnings}`} />
-            <StatCard title="Unpaid Bills" value={stats.unpaidBills} />
-            <StatCard title="Average Waste per Bin" value={`${stats.averageWastePerBin} kg`} />
-            <StatCard title="Upcoming Special Collections" value={stats.upcomingSpecialCollections} />
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <WasteAnalysis />
-            <ResidentTable />
-            <BillingSettings />
-          </div>
-          <InquiriesList />
+        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 p-6">
+          {activeTab === 'dashboard' && (
+            <>
+              <h1 className="text-2xl font-semibold mb-6 text-gray-800">Dashboard Overview</h1>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+                <StatCard title="Total Residents" value={stats.totalResidents} icon={<Users size={24} />} />
+                <StatCard title="Total Waste Collected" value={`${stats.totalWasteCollected} kg`} icon={<BarChartIcon size={24} />} />
+                <StatCard title="Total Earnings" value={`${stats.totalEarnings} LKR`} icon={<PieChartIcon size={24} />} />
+                <StatCard title="Recycling Rate" value={`${stats.recyclingRate}%`} icon={<FileText size={24} />} />
+              </div>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                <WasteAnalysis data={wasteAnalysisData} />
+                <CollectionTrends data={collectionTrendsData} />
+              </div>
+             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <ResidentTable residents={residents} onSeeAll={() => setShowAllResidents(true)} />
+                <InquiriesList inquiries={inquiries} onSeeAll={() => setShowAllInquiries(true)} />
+              </div>
+            </>
+          )}
+          {activeTab === 'residents' && <h1 className="text-2xl font-semibold mb-6 text-gray-800">Residents</h1>}
+          {activeTab === 'reports' && <ReportsPage />}
         </main>
       </div>
+      {showAllResidents && (
+        <Modal title="All Residents" onClose={() => setShowAllResidents(false)}>
+          <ResidentTable residents={residents} />
+        </Modal>
+      )}
+      {showAllInquiries && (
+        <Modal title="All Inquiries" onClose={() => setShowAllInquiries(false)}>
+          <InquiriesList inquiries={inquiries} />
+        </Modal>
+      )}
     </div>
   );
 };
 
+interface ModalProps {
+  title: string;
+  children: React.ReactNode;
+  onClose: () => void;
+}
+
+const Modal: React.FC<ModalProps> = ({ title, children, onClose }) => (
+  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+    <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl">
+      <div className="flex justify-between items-center p-6 border-b">
+        <h2 className="text-xl font-semibold text-gray-800">{title}</h2>
+        <button onClick={onClose} className="text-gray-600 hover:text-gray-800">
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+      <div className="p-6 max-h-[80vh] overflow-y-auto">
+        {children}
+      </div>
+    </div>
+  </div>
+);
+
 export default Dashboard;
+
+
