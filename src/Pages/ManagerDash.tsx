@@ -1,12 +1,12 @@
 import React from 'react';
-import WasteManagementDashboard from '../Components/WasteManagementDashboard';
+import Dashboard from '../Components/WasteManagementDashboard';
 
 const ManagerPage: React.FC = () => {
     return (
         <div>
-            <WasteManagementDashboard />
+            <Dashboard />
         </div>
     );
-};
+}; 
 
 export default ManagerPage;
