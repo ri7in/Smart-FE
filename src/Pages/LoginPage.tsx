@@ -16,16 +16,16 @@ const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-400 to-green-600 flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-br from-green-400 to-green-600 flex flex-col items-center justify-center px-4">
       <motion.div
-        className="max-w-md w-full space-y-8 bg-white p-10 rounded-xl shadow-2xl"
+        
         initial={{ opacity: 0, y: -50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
         <div>
-          <h1 className="text-4xl font-extrabold text-center text-green-600 mb-2">SmartBin</h1>
-          <h2 className="text-center text-2xl font-bold text-gray-900">Sign in to your account</h2>
+          <h1 className="text-4xl font-extrabold text-center text-white">SmartBin</h1>
+          <h2 className="text-center text-2xl font-bold text-gray-900 text-white ">Sign in to your account</h2>
         </div>
         <form className="mt-8 space-y-6" onSubmit={handleLogin}>
           <Input
@@ -33,14 +33,14 @@ const LoginPage: React.FC = () => {
             placeholder="Username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
-            icon={<FaUser />}
+            icon={<FaUser className="text-gray-400" />}
           />
           <Input
             type="password"
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            icon={<FaLock />}
+            icon={<FaLock className="text-gray-400" />}
           />
           <div>
             <Button className="w-full py-3 px-4 text-lg" type="submit">
