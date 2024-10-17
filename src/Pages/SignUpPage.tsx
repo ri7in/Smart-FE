@@ -37,25 +37,34 @@ const SignUpPage: React.FC = () => {
     setFormData({ ...formData, addresses: [...formData.addresses, ''] });
   };
 
+  const removeAddress = (index: number) => {
+  const newAddresses = formData.addresses.filter((_, i) => i !== index);
+  setFormData({ ...formData, addresses: newAddresses });
+};
+
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // Handle sign up logic here
   };
 
   return (
+<motion.div
+  className="fixed inset-0 bg-cover bg-center"
+  style={{ backgroundImage: "url('src/assets/bglogin.png')" }}
+>
+  <motion.div
+    className=" min-h-screen flex items-center justify-center py-12"
+  >
     <motion.div
-      className="min-h-screen bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center py-12"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}
+      className="shadow-xl p-8 rounded-lg  w-96 max-h-196 overflow-auto"
+      initial={{ scale: 0.9 }}
+      animate={{ scale: 1 }}
+      transition={{ duration: 0.3 }}
     >
-      <motion.div
-        className="bg-white p-8 rounded-lg shadow-xl w-96"
-        initial={{ scale: 0.9 }}
-        animate={{ scale: 1 }}
-        transition={{ duration: 0.3 }}
-      >
-        <h1 className="text-3xl font-bold mb-6 text-center text-green-600">Sign Up</h1>
+
+
+        <h1 className="text-3xl font-bold mb-6 text-center text-white">Sign Up</h1>
         <form onSubmit={handleSubmit}>
           <Input
             type="text"
@@ -97,24 +106,42 @@ const SignUpPage: React.FC = () => {
             onChange={handleChange}
             icon={<FaPhone />}
           />
-          {formData.addresses.map((address, index) => (
-            <Input
-              key={index}
-              type="text"
-              name="address"
-              placeholder={`Address ${index + 1}`}
-              value={address}
-              onChange={(e) => handleChange(e, index)}
-              icon={<FaHome />}
-            />
-          ))}
-          <Button type="button" onClick={addAddress} className="w-full mb-4">
-            Add Another Address
+{formData.addresses.map((address, index) => (
+  <div key={index} className="flex items-center mb-4">
+    <Input
+      type="text"
+      name="address"
+      placeholder={`Address ${index + 1}`}
+      value={address}
+      onChange={(e) => handleChange(e, index)}
+      icon={<FaHome />}
+    />
+          <Button
+            type="button"
+            onClick={() => removeAddress(index)}
+            className="ml-2 text-sm"
+          >
+            Remove
           </Button>
-          <Button type="submit" className="w-full">
-            Sign Up
-          </Button>
+        </div>
+        ))}
+
+
+          <Button
+  type="button"
+  onClick={addAddress}
+  className="w-full mb-2 text-sm bg-green-500 hover:bg-green-600 text-white py-2 rounded"
+>
+  Add Address
+</Button>
+<Button
+  type="submit"
+  className="w-full text-sm bg-blue-500 hover:bg-blue-600 text-white py-2 rounded"
+>
+  Sign Up
+</Button>
         </form>
+      </motion.div> 
       </motion.div>
     </motion.div>
   );
