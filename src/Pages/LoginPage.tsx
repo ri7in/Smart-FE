@@ -18,7 +18,7 @@ const LoginPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-400 to-green-600 flex flex-col items-center justify-center px-4">
       <motion.div
-        
+        //className="max-w-md w-full space-y-8 bg-white p-10 rounded-xl shadow-2xl"   White card was removed
         initial={{ opacity: 0, y: -50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
