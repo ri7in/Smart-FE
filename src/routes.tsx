@@ -7,6 +7,7 @@ import LoginPage from "./Pages/LoginPage";
 import SignUpPage from "./Pages/SignUpPage";
 import UserDashboard from "./Components/UserDashboard";
 import Dashboard from "./Components/WasteManagementDashboard";
+import ReportsPage from "./Pages/ReportsPage";
 
 const router = createBrowserRouter([
   {
@@ -28,6 +29,10 @@ const router = createBrowserRouter([
     {
     path: "/manager",
     element: <Dashboard />,
+  },
+      {
+    path: "/managerreport",
+    element: <ReportsPage />,
   },
 ]);
 
