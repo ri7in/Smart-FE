@@ -27,8 +27,8 @@ const ReportsPage: React.FC = () => {
     const doc = new jsPDF();
     
     // Add company logo
-    const logoUrl = `url(${bgImage})`; // Replace with actual logo URL
-    doc.addImage(logoUrl, 'PNG', 10, 10, 40, 20);
+   // const logoUrl = `url(${bgImage})`; // Replace with actual logo URL
+   // doc.addImage(logoUrl, 'PNG', 10, 10, 40, 20);
     
     // Add title
     doc.setFontSize(18);
