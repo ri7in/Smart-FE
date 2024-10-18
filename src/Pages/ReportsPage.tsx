@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Download } from 'lucide-react';
 import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';
-import bgImage from '../assets/bglogin.png'; 
+import bgImage from '../assets/logo.png'; 
 
 interface ReportData {
   type: string;
@@ -27,8 +27,8 @@ const ReportsPage: React.FC = () => {
     const doc = new jsPDF();
     
     // Add company logo
-   // const logoUrl = `url(${bgImage})`; // Replace with actual logo URL
-   // doc.addImage(logoUrl, 'PNG', 10, 10, 40, 20);
+    // const logoUrl = `url(${bgImage})`; // Replace with actual logo URL
+    // doc.addImage(logoUrl, 'PNG', 10, 10, 40, 20);
     
     // Add title
     doc.setFontSize(18);
