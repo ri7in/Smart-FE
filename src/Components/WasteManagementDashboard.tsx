@@ -215,18 +215,37 @@ interface InquiriesListProps {
   inquiries: Array<{ id: number; text: string; resolved: boolean }>;
   onSeeAll?: () => void;
 }
-
 const InquiriesList: React.FC<InquiriesListProps> = ({ inquiries, onSeeAll }) => {
+  const [inquiryList, setInquiryList] = useState(inquiries);
+
+  const toggleResolved = (id: number) => {
+    setInquiryList((prev) =>
+      prev.map((inquiry) =>
+        inquiry.id === id ? { ...inquiry, resolved: true } : inquiry
+      )
+    );
+  };
+
   return (
     <div className="bg-white p-4 rounded-lg shadow-md">
       <h2 className="text-lg font-semibold mb-4 text-gray-800">Recent Inquiries</h2>
       <ul className="space-y-2">
-        {inquiries.slice(0, 5).map((inquiry) => (
+        {inquiryList.slice(0, 5).map((inquiry) => (
           <li key={inquiry.id} className="flex items-center justify-between">
             <span className="text-sm text-gray-600">{inquiry.text}</span>
-            <span className={`text-xs px-2 py-1 rounded ${inquiry.resolved ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>
-              {inquiry.resolved ? 'Resolved' : 'Pending'}
-            </span>
+            <div className="flex items-center">
+              <span className={`text-xs px-2 py-1 rounded ${inquiry.resolved ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>
+                {inquiry.resolved ? 'Resolved' : 'Pending'}
+              </span>
+              {!inquiry.resolved && (
+                <button 
+                  onClick={() => toggleResolved(inquiry.id)} 
+                  className="ml-2 text-xs text-blue-600 hover:text-blue-800 px-2 py-1 rounded border border-blue-600"
+                >
+                  Resolved
+                </button>
+              )}
+            </div>
           </li>
         ))}
       </ul>
@@ -238,6 +257,8 @@ const InquiriesList: React.FC<InquiriesListProps> = ({ inquiries, onSeeAll }) =>
     </div>
   );
 };
+
+
 
 const Dashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
