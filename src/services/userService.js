@@ -1,6 +1,6 @@
 import APIClient from "./api-client";
 
-const apiClient = new APIClient("/customers");
+const apiClient = new APIClient("/users/register");
 
 class UserService {
     Create(user) {
