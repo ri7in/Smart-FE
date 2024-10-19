@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { FaUser, FaEnvelope, FaLock, FaHome, FaPhone } from "react-icons/fa";
 import Input from "../components/Input";
-import Button from "../components/Button";
 import { useNavigate } from "react-router-dom";
+import Button from "../components/atoms/Button/Button";
 
 interface FormData {
   name: string;

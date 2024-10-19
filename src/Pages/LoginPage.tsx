@@ -2,10 +2,10 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { FaUser, FaLock } from "react-icons/fa";
 import Input from "../components/Input";
-import Button from "../components/Button";
 import ForgotPasswordModal from "../components/ForgotPasswordModal";
 import bgImage from "../assets/bglogin.png"; // Import the background image
 import { useNavigate } from "react-router-dom"; // Use useNavigate
+import Button from "../components/atoms/Button/Button";
 
 const LoginPage: React.FC = () => {
   const [username, setUsername] = useState("");

@@ -8,7 +8,7 @@ import SignUpPage from "./Pages/SignUpPage";
 import UserDashboard from "./components/UserDashboard";
 import Dashboard from "./components/WasteManagementDashboard";
 import ReportsPage from "./Pages/ReportsPage";
-import UserCollections from "./components/UserCollections";
+import UserCollectionsLayout from "./components/organisms/UserCollectionsLayout/UserCollectionsLayout";
 
 const router = createBrowserRouter([
   {
@@ -29,7 +29,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/collections",
-    element: <UserCollections />,
+    element: <UserCollectionsLayout />,
   },
   {
     path: "/manager",

@@ -1,16 +1,19 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { FaEnvelope } from 'react-icons/fa';
-import Input from './Input';
-import Button from './Button';
+import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { FaEnvelope } from "react-icons/fa";
+import Input from "./Input";
+import Button from "./atoms/Button/Button";
 
 interface ForgotPasswordModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({ isOpen, onClose }) => {
-  const [email, setEmail] = useState('');
+const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({
+  isOpen,
+  onClose,
+}) => {
+  const [email, setEmail] = useState("");
   const [isSent, setIsSent] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -34,7 +37,9 @@ const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({ isOpen, onClo
             animate={{ scale: 1, y: 0 }}
             exit={{ scale: 0.9, y: 50 }}
           >
-            <h2 className="text-2xl font-bold mb-4 text-green-600">Forgot Password</h2>
+            <h2 className="text-2xl font-bold mb-4 text-green-600">
+              Forgot Password
+            </h2>
             {!isSent ? (
               <form onSubmit={handleSubmit}>
                 <Input
@@ -44,7 +49,9 @@ const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({ isOpen, onClo
                   onChange={(e) => setEmail(e.target.value)}
                   icon={<FaEnvelope />}
                 />
-                <Button className="w-full mb-4" type="submit">Send Reset Link</Button>
+                <Button className="w-full mb-4" type="submit">
+                  Send Reset Link
+                </Button>
               </form>
             ) : (
               <p className="text-green-600 mb-4">
