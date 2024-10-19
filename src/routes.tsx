@@ -5,10 +5,10 @@ import {
 } from "react-router-dom";
 import LoginPage from "./Pages/LoginPage";
 import SignUpPage from "./Pages/SignUpPage";
-import UserDashboard from "./components/UserDashboard";
 import Dashboard from "./components/WasteManagementDashboard";
 import ReportsPage from "./Pages/ReportsPage";
 import UserCollectionsLayout from "./components/organisms/UserCollectionsLayout/UserCollectionsLayout";
+import DashboardLayout from "./components/organisms/DashboardLayout/DashboardLayout";
 
 const router = createBrowserRouter([
   {
@@ -25,7 +25,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/user",
-    element: <UserDashboard />,
+    element: <DashboardLayout />,
   },
   {
     path: "/collections",
