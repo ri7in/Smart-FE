@@ -1,14 +1,6 @@
 import React, { useState } from "react";
-import {
-  Home,
-  Users,
-  FileText,
-  BarChart as BarChartIcon,
-  PieChart as PieChartIcon,
-  Bell,
-  Search,
-  Settings,
-} from "lucide-react";
+import { Home, Users, Bell, Search, Settings } from "lucide-react";
+import CollectionTable from "./CollectionTable";
 
 interface SidebarProps {
   activeTab: string;
@@ -125,31 +117,8 @@ const Header: React.FC = () => {
   );
 };
 
-interface StatCardProps {
-  title: string;
-  value: string | number;
-  icon: React.ReactNode;
-}
-
-const StatCard: React.FC<StatCardProps> = ({ title, value, icon }) => (
-  <div className="bg-white p-4 rounded-lg shadow-md flex items-center justify-between transition-all duration-300 hover:shadow-lg">
-    <div>
-      <h3 className="text-sm font-medium text-gray-500">{title}</h3>
-      <p className="text-xl font-bold text-gray-800 mt-1">{value}</p>
-    </div>
-    <div className="text-green-500">{icon}</div>
-  </div>
-);
-
-const Dashboard: React.FC = () => {
+const UserCollections: React.FC = () => {
   const [activeTab, setActiveTab] = useState("dashboard");
-
-  const stats = {
-    totalBins: 5,
-    totalBills: 16,
-    lastCollection: "11/9/2024",
-    nextCollection: "18/9/2024",
-  };
 
   return (
     <div className="flex h-screen bg-gray-100">
@@ -158,33 +127,7 @@ const Dashboard: React.FC = () => {
         <Header />
         <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 p-6">
           <>
-            <h1 className="text-2xl font-semibold mb-6 text-gray-800">
-              Welcome Mr. Sachila Sampath!
-            </h1>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-              <StatCard
-                title="Total Bins"
-                value={stats.totalBins}
-                icon={<Users size={24} />}
-              />
-              <StatCard
-                title="Total Bills"
-                value={`${stats.totalBills}`}
-                icon={<BarChartIcon size={24} />}
-              />
-              <StatCard
-                title="Last Collection"
-                value={`${stats.lastCollection}`}
-                icon={<PieChartIcon size={24} />}
-              />
-              <StatCard
-                title="Next Collection"
-                value={`${stats.nextCollection}`}
-                icon={<FileText size={24} />}
-              />
-            </div>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6"></div>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6"></div>
+            <CollectionTable />
           </>
         </main>
       </div>
@@ -192,4 +135,4 @@ const Dashboard: React.FC = () => {
   );
 };
 
-export default Dashboard;
+export default UserCollections;
