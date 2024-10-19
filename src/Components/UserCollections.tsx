@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Home, Users, Bell, Search, Settings } from "lucide-react";
-import CollectionTable from "./CollectionTable";
+import CollectionTable from "./organisms/CollectionTable/CollectionTable";
 
 interface SidebarProps {
   activeTab: string;

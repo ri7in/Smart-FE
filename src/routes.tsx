@@ -5,10 +5,10 @@ import {
 } from "react-router-dom";
 import LoginPage from "./Pages/LoginPage";
 import SignUpPage from "./Pages/SignUpPage";
-import UserDashboard from "./Components/UserDashboard";
-import Dashboard from "./Components/WasteManagementDashboard";
+import UserDashboard from "./components/UserDashboard";
+import Dashboard from "./components/WasteManagementDashboard";
 import ReportsPage from "./Pages/ReportsPage";
-import UserCollections from "./Components/UserCollections";
+import UserCollections from "./components/UserCollections";
 
 const router = createBrowserRouter([
   {
