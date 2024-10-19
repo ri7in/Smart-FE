@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { FaUser, FaEnvelope, FaLock, FaHome, FaPhone } from "react-icons/fa";
-import Input from "../components/Input";
 import { useNavigate } from "react-router-dom";
 import Button from "../components/atoms/Button/Button";
+import InputWithIcon from "../components/molecules/InputWithIcon/InputWithIcon";
 
 interface FormData {
   name: string;
@@ -72,7 +72,7 @@ const SignUpPage: React.FC = () => {
             Sign Up
           </h1>
           <form onSubmit={handleSubmit}>
-            <Input
+            <InputWithIcon
               type="text"
               name="name"
               placeholder="Full Name"
@@ -80,7 +80,7 @@ const SignUpPage: React.FC = () => {
               onChange={handleChange}
               icon={<FaUser />}
             />
-            <Input
+            <InputWithIcon
               type="email"
               name="email"
               placeholder="Email"
@@ -88,7 +88,7 @@ const SignUpPage: React.FC = () => {
               onChange={handleChange}
               icon={<FaEnvelope />}
             />
-            <Input
+            <InputWithIcon
               type="password"
               name="password"
               placeholder="Password"
@@ -96,7 +96,7 @@ const SignUpPage: React.FC = () => {
               onChange={handleChange}
               icon={<FaLock />}
             />
-            <Input
+            <InputWithIcon
               type="password"
               name="confirmPassword"
               placeholder="Confirm Password"
@@ -104,7 +104,7 @@ const SignUpPage: React.FC = () => {
               onChange={handleChange}
               icon={<FaLock />}
             />
-            <Input
+            <InputWithIcon
               type="tel"
               name="phone"
               placeholder="Phone Number"
@@ -114,7 +114,7 @@ const SignUpPage: React.FC = () => {
             />
             {formData.addresses.map((address, index) => (
               <div key={index} className="flex items-center mb-4">
-                <Input
+                <InputWithIcon
                   type="text"
                   name="address"
                   placeholder={`Address ${index + 1}`}

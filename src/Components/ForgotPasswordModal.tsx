@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaEnvelope } from "react-icons/fa";
-import Input from "./Input";
 import Button from "./atoms/Button/Button";
+import InputWithIcon from "./molecules/InputWithIcon/InputWithIcon";
 
 interface ForgotPasswordModalProps {
   isOpen: boolean;
@@ -42,7 +42,7 @@ const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({
             </h2>
             {!isSent ? (
               <form onSubmit={handleSubmit}>
-                <Input
+                <InputWithIcon
                   type="email"
                   placeholder="Enter your email"
                   value={email}

@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { FaUser, FaLock } from "react-icons/fa";
-import Input from "../components/Input";
 import ForgotPasswordModal from "../components/ForgotPasswordModal";
 import bgImage from "../assets/bglogin.png"; // Import the background image
 import { useNavigate } from "react-router-dom"; // Use useNavigate
 import Button from "../components/atoms/Button/Button";
+import InputWithIcon from "../components/molecules/InputWithIcon/InputWithIcon";
 
 const LoginPage: React.FC = () => {
   const [username, setUsername] = useState("");
@@ -48,14 +48,14 @@ const LoginPage: React.FC = () => {
           {/* Changed to font-medium */}
         </div>
         <form className="space-y-6" onSubmit={handleLogin}>
-          <Input
+          <InputWithIcon
             type="text"
             placeholder="Username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             icon={<FaUser className="text-gray-400" />}
           />
-          <Input
+          <InputWithIcon
             type="password"
             placeholder="Password"
             value={password}
