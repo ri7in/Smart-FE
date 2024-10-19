@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { FaUser, FaLock } from "react-icons/fa";
-import ForgotPasswordModal from "../components/ForgotPasswordModal";
+import ForgotPasswordModal from "../Components/ForgotPasswordModal";
 import bgImage from "../assets/bglogin.png"; // Import the background image
 import { useNavigate } from "react-router-dom"; // Use useNavigate
-import Button from "../components/atoms/Button/Button";
-import InputWithIcon from "../components/molecules/InputWithIcon/InputWithIcon";
+import Button from "../Components/atoms/Button/Button";
+import InputWithIcon from "../Components/molecules/InputWithIcon/InputWithIcon";
+import authService from "../services/authService";
+import { useAuth } from "../contexts/AuthContext";
 
 const LoginPage: React.FC = () => {
   const [username, setUsername] = useState("");
@@ -13,11 +15,18 @@ const LoginPage: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate(); // Initialize useNavigate
 
+  const { login, authToken } = useAuth();
+
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    // Here you would handle your login logic, e.g., API call
-    // If login is successful, redirect to /user
-    navigate("/user"); // Redirect to user page
+
+    console.log(username, password);
+
+    authService.AuthenticateUser({ username, password }).then((res) => {
+      login(res.token);
+      navigate("/user");
+    });
+
   };
 
   const handleSignup = () => {
