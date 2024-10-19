@@ -3,6 +3,10 @@ import { motion } from 'framer-motion';
 import { FaUser, FaEnvelope, FaLock, FaHome, FaPhone } from 'react-icons/fa';
 import Input from '../Components/Input';
 import Button from '../Components/Button';
+import { useNavigate } from 'react-router-dom';
+
+
+
 
 interface FormData {
   name: string;
@@ -22,6 +26,9 @@ const SignUpPage: React.FC = () => {
     phone: '',
     addresses: [''],
   });
+
+  const navigate = useNavigate();
+
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>, index?: number) => {
     if (e.target.name === 'address' && index !== undefined) {
@@ -43,10 +50,14 @@ const SignUpPage: React.FC = () => {
 };
 
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Handle sign up logic here
-  };
+const handleSubmit = (e: React.FormEvent) => {
+  e.preventDefault();
+  // Handle sign up logic here
+
+  // Redirect to the login page after signup
+  navigate('/login');
+};
+
 
   return (
 <motion.div
@@ -57,7 +68,7 @@ const SignUpPage: React.FC = () => {
     className=" min-h-screen flex items-center justify-center py-12"
   >
     <motion.div
-      className="shadow-xl p-8 rounded-lg  w-96 max-h-196 overflow-auto"
+      className="bg-white bg-opacity-10 backdrop-blur-md shadow-xl p-8 rounded-lg  w-96 max-h-196 overflow-auto"
       initial={{ scale: 0.9 }}
       animate={{ scale: 1 }}
       transition={{ duration: 0.3 }}
