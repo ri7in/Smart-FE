@@ -8,6 +8,7 @@ import SignUpPage from "./Pages/SignUpPage";
 import UserDashboard from "./Components/UserDashboard";
 import Dashboard from "./Components/WasteManagementDashboard";
 import ReportsPage from "./Pages/ReportsPage";
+import UserCollections from "./Components/UserCollections";
 
 const router = createBrowserRouter([
   {
@@ -22,15 +23,19 @@ const router = createBrowserRouter([
     path: "/signup",
     element: <SignUpPage />,
   },
-    {
+  {
     path: "/user",
     element: <UserDashboard />,
   },
-    {
+  {
+    path: "/collections",
+    element: <UserCollections />,
+  },
+  {
     path: "/manager",
     element: <Dashboard />,
   },
-      {
+  {
     path: "/managerreport",
     element: <ReportsPage />,
   },
