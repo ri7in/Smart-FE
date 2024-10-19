@@ -2,8 +2,9 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { FaUser, FaEnvelope, FaLock, FaHome, FaPhone } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import Button from "../components/atoms/Button/Button";
-import InputWithIcon from "../components/molecules/InputWithIcon/InputWithIcon";
+import Button from "../Components/atoms/Button/Button";
+import InputWithIcon from "../Components/molecules/InputWithIcon/InputWithIcon";
+import userService from "../services/userService";
 
 interface FormData {
   name: string;
@@ -50,10 +51,16 @@ const SignUpPage: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle sign up logic here
 
-    // Redirect to the login page after signup
-    navigate("/login");
+    const newForm = {
+      username: formData.email,
+      password: formData.password,
+    };
+
+    userService.Create(newForm).then((res) => {
+      console.log(res);
+      navigate("/login");
+    });
   };
 
   return (
