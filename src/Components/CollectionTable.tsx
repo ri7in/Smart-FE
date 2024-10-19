@@ -4,7 +4,7 @@ import axios from "axios";
 interface CollectionDTO {
   id: number;
   wasteBinId: number;
-  collectionTime: string;
+  collectionTime: number[]; // Updated type to match the API response
   weight: number;
   fee: number;
 }
@@ -64,13 +64,15 @@ const CollectionTable: React.FC = () => {
               <tr key={collection.id}>
                 <td>{collection.id}</td>
                 <td>{collection.wasteBinId}</td>
-                {new Date(
-                  collection.collectionTime[0], // year
-                  collection.collectionTime[1] - 1, // month (0-based)
-                  collection.collectionTime[2], // day
-                  collection.collectionTime[3], // hours
-                  collection.collectionTime[4] // minutes
-                ).toLocaleString()}
+                <td>
+                  {new Date(
+                    collection.collectionTime[0], // year
+                    collection.collectionTime[1] - 1, // month (0-based)
+                    collection.collectionTime[2], // day
+                    collection.collectionTime[3], // hours
+                    collection.collectionTime[4] // minutes
+                  ).toLocaleString()}
+                </td>
                 <td>{collection.weight}</td>
                 <td>{collection.fee}</td>
                 <td>
@@ -89,6 +91,7 @@ const CollectionTable: React.FC = () => {
 };
 
 export default CollectionTable;
+
 // import React from "react";
 
 // // Define the type for the CollectionDTO
