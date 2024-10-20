@@ -1,36 +1,23 @@
 import React from "react";
+import axios from "axios";
 
 const TrashActions: React.FC = () => {
-  const wasteBinId = 1; // Replace with the actual ID of the waste bin
-
-  const handleTrashAdded = () => {
+  const handleTrashAdded = async () => {
     console.log("Trash added");
-
-    // Define the increment value
-    const increment = 10;
-
-    // Make the PATCH request
-    fetch(
-      `http://your-api-url/api/waste-bins/${wasteBinId}/level/increase?increment=${increment}`,
-      {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    )
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
+    try {
+      const response = await axios.patch(
+        `http://localhost:8080/api/waste-bins/1/level/increase?increment=5.0`,
+        { increment: 5.0 },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
         }
-        return response.json();
-      })
-      .then((data) => {
-        console.log("Waste bin level increased:", data);
-      })
-      .catch((error) => {
-        console.error("Error increasing waste bin level:", error);
-      });
+      );
+      console.log("Waste bin level increased:", response.data);
+    } catch (error) {
+      console.error("Error increasing waste bin level:", error);
+    }
   };
 
   const handleTrashCollected = () => {
