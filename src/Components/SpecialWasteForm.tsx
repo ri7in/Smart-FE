@@ -62,11 +62,15 @@ const SpecialWasteForm: React.FC = () => {
       const response = await axios.post(
         "http://localhost:8080/api/special-collections",
         specialCollectionDTO
-      ).then((response) => {
-        console.log(response.data);
-        navigate("/reviewForm");
-      });
+      );
+
       console.log("Special collection created:", response.data);
+
+      const params = new URLSearchParams(
+        specialCollectionDTO as any
+      ).toString();
+      navigate(`/reviewForm?${params}`);
+
       setSuccess(true);
     } catch (err) {
       setError(

@@ -2,6 +2,7 @@ import React from "react";
 import { Home, Trash, BadgeDollarSign } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import NavItem from "../../atoms/NavItem/NavItem";
+import LogoutButton from "../../LogoutButton";
 
 interface SidebarProps {
   activeTab: string;
@@ -39,6 +40,7 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => {
           onClick={() => handleNavigation("payment", "/payment")}
         />
       </nav>
+      <LogoutButton />
     </div>
   );
 };

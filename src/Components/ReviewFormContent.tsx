@@ -1,15 +1,5 @@
-import React, { useState } from "react";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
-
-interface FormData {
-  requestTime: string;
-  collectionTime: string;
-  predictedTrashWeight: string;
-  status: string;
-  fee: string;
-  wasteAccount: number;
-}
+import React from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const ProgressIndicator: React.FC = () => (
   <div className="flex items-center justify-center mb-6">
@@ -21,6 +11,15 @@ const ProgressIndicator: React.FC = () => (
 
 const ReviewFormContent: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Access the parameters from the URL
+  const query = new URLSearchParams(location.search);
+  const requestTime = query.get("requestTime") || "";
+  const collectionTime = query.get("collectionTime") || "";
+  const predictedTrashWeight = query.get("predictedTrashWeight") || "";
+  const status = query.get("status") || "";
+  const fee = query.get("fee") || "";
 
   const navigateToForm = () => {
     navigate("/specialCollectionForm");
@@ -36,30 +35,30 @@ const ReviewFormContent: React.FC = () => {
       <h1 className="text-2xl font-bold mb-6">Review Info</h1>
       <div className="w-full mx-auto mt-10 p-6 bg-white rounded-lg shadow-xl">
         <p className="font-light mb-6">
-          Fill in the data for the special waste collection.
+          Review the data for the special waste collection.
         </p>
         <div className="flex-col pl-40 pr-40">
           <div className="flex justify-between mb-2">
             <span className="font-bold text-xl">Date:</span>
-            <span className="text-xl">2024/10/20</span>
+            <span className="text-xl">{requestTime.split("T")[0]}</span>
           </div>
           <div className="flex justify-between mb-2">
             <span className="font-bold text-xl">Time:</span>
-            <span className="text-xl">20:00</span>
+            <span className="text-xl">{collectionTime.split("T")[1]}</span>
           </div>
           <div className="flex justify-between mb-2">
             <span className="font-bold text-xl">
               Predicted Trash Weight (kg):
             </span>
-            <span className="text-xl">50</span>
+            <span className="text-xl">{predictedTrashWeight}</span>
           </div>
           <div className="flex justify-between mb-2">
             <span className="font-bold text-xl">Status:</span>
-            <span className="text-xl">Pending</span>
+            <span className="text-xl">{status}</span>
           </div>
           <div className="flex justify-between mb-8">
             <span className="font-bold text-xl">Fee (LKR):</span>
-            <span className="text-xl">500</span>
+            <span className="text-xl">{fee}</span>
           </div>
         </div>
         <div className="flex justify-center">
@@ -71,7 +70,7 @@ const ReviewFormContent: React.FC = () => {
             Back
           </button>
           <button
-            type="submit"
+            type="button"
             className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
             onClick={navigateToTable}
           >

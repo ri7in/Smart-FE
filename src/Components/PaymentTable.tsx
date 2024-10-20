@@ -85,7 +85,9 @@ const PaymentTable: React.FC = () => {
                   bill.billDate[2]
                 ).toLocaleDateString()}
               </td>
-              <td className="py-3 px-6 text-left">${bill.amount.toFixed(2)}</td>
+              <td className="py-3 px-6 text-left">
+                LKR {bill.amount.toFixed(2)}
+              </td>
               <td className="py-3 px-6 text-left">{bill.wasteAccountId}</td>
               <td className="py-3 px-6 text-left">
                 <span
