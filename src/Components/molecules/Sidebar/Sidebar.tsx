@@ -1,5 +1,5 @@
 import React from "react";
-import { Home, Trash, BadgeDollarSign } from "lucide-react";
+import { Home, Trash, BadgeDollarSign, BadgePlus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import NavItem from "../../atoms/NavItem/NavItem";
 import LogoutButton from "../../LogoutButton";
@@ -38,6 +38,12 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => {
           text="Payment"
           active={activeTab === "payment"}
           onClick={() => handleNavigation("payment", "/payment")}
+        />
+           <NavItem
+          icon={<BadgePlus />}
+          text="IOT Device"
+          active={activeTab === "TrashActions"}
+          onClick={() => handleNavigation("TrashActions", "/iotdevice")}
         />
       </nav>
       <LogoutButton />

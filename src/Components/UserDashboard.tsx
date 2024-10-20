@@ -19,6 +19,7 @@ import {
   Send,
   UserRoundIcon,
 } from "lucide-react";
+
 import NavItem from "./atoms/NavItem/NavItem";
 import LogoutButton from "./LogoutButton";
 
@@ -267,13 +268,6 @@ const UserDashboard = () => {
               onSend={handleInquirySend}
               sent={inquirySent}
             />
-            {/* <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-              <WasteBinHistoryTable history={binHistory} />
-              <div className="grid grid-rows-2 gap-6">
-                <WasteTypeChart data={chartData} />
-                <BinLevelPieChart data={pieChartData} colors={COLORS} />
-              </div>
-            </div> */}
           </div>
         </main>
       </div>
@@ -517,5 +511,3 @@ const InquiryCard = ({
 };
 
 export default UserDashboard;
-
-//rwar
