@@ -2,6 +2,8 @@ import React, { useState } from "react";
 
 import inquiryService from "../services/inquiryService";
 import useWaste from "../hooks/useWaste";
+import useHistory from "../hooks/useHistory";
+
 
 import {
   Home,
@@ -20,6 +22,7 @@ import {
 
 import NavItem from "./atoms/NavItem/NavItem";
 import LogoutButton from "./LogoutButton";
+
 import {
   BarChart,
   Bar,
@@ -355,9 +358,13 @@ const WasteBinHistoryTable = ({
 }) => {
   const { data } = useWaste();
 
+  const { data: historyData } = useHistory();
+
   console.log("thu: ", data);
 
   const newData = data?.results;
+
+  const newHistory = historyData?.results;
 
   return (
     <div className="bg-white p-4 rounded-lg shadow-md">
@@ -365,21 +372,20 @@ const WasteBinHistoryTable = ({
       <Table>
         <Table.Header>
           <Table.Row>
-            <Table.Head>Date</Table.Head>
-            <Table.Head>Waste Bin</Table.Head>
-            <Table.Head>Waste Type</Table.Head>
-            <Table.Head>Level</Table.Head>
+            <Table.Head>Waste Bin Number</Table.Head>
+            <Table.Head>Waste Category</Table.Head>
+            <Table.Head>Recyclable</Table.Head>
+            <Table.Head>Capacity</Table.Head>
+            <Table.Head>Current Level</Table.Head>
           </Table.Row>
         </Table.Header>
         <Table.Body>
           {newData?.map((entry, index) => (
             <Table.Row key={index}>
-              <Table.Cell>
-                {new Date(entry.date).toLocaleDateString()}
-              </Table.Cell>
               <Table.Cell>{entry.binNumber}</Table.Cell>
-              <Table.Cell>{entry.wasteType}</Table.Cell>
-              <Table.Cell>{entry.currentLevel}%</Table.Cell>
+              <Table.Cell>{entry.wasteCategory}</Table.Cell>
+              <Table.Cell>{entry.isRecyclable ? "Yes" : "No"}</Table.Cell>
+              <Table.Cell>{entry.capacity}</Table.Cell>
             </Table.Row>
           ))}
         </Table.Body>
