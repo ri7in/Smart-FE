@@ -30,19 +30,6 @@ const CollectionTable: React.FC = () => {
     }
   };
 
-  const handleDelete = async (id: number) => {
-    try {
-      await axios.delete(`/api/collections/${id}`);
-      fetchCollections();
-    } catch (error) {
-      console.error("Error deleting collection:", error);
-    }
-  };
-
-  const handleEdit = (collection: CollectionDTO) => {
-    console.log("Edit collection:", collection);
-  };
-
   const navigateToForm = () => {
     navigate("/specialCollectionForm");
   };
@@ -61,21 +48,20 @@ const CollectionTable: React.FC = () => {
       ) : (
         <table className="min-w-full bg-white rounded-lg overflow-hidden shadow-lg">
           <thead>
-            <tr className="bg-green-500 text-white">
-              <th className="py-2 px-4">ID</th>
-              <th className="py-2 px-4">Waste Bin ID</th>
-              <th className="py-2 px-4">Collection Time</th>
-              <th className="py-2 px-4">Weight</th>
-              <th className="py-2 px-4">Fee</th>
-              <th className="py-2 px-4">Actions</th>
+            <tr className="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
+              <th className="py-3 px-6">ID</th>
+              <th className="py-3 px-6">Waste Bin ID</th>
+              <th className="py-3 px-6">Collection Time</th>
+              <th className="py-3 px-6">Weight</th>
+              <th className="py-3 px-6">Fee (LKR)</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className="text-gray-600 text-sm">
             {collections.map((collection) => (
               <tr key={collection.id} className="hover:bg-gray-100">
-                <td className="border px-4 py-2">{collection.id}</td>
-                <td className="border px-4 py-2">{collection.wasteBinId}</td>
-                <td className="border px-4 py-2">
+                <td className="border py-3 px-6">{collection.id}</td>
+                <td className="border py-3 px-6">{collection.wasteBinId}</td>
+                <td className="border py-3 px-6">
                   {new Date(
                     collection.collectionTime[0], // year
                     collection.collectionTime[1] - 1, // month (0-based)
@@ -84,22 +70,8 @@ const CollectionTable: React.FC = () => {
                     collection.collectionTime[4] // minutes
                   ).toLocaleString()}
                 </td>
-                <td className="border px-4 py-2">{collection.weight}</td>
-                <td className="border px-4 py-2">{collection.fee}</td>
-                <td className="border px-4 py-2">
-                  <button
-                    className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 mr-2"
-                    onClick={() => handleEdit(collection)}
-                  >
-                    Edit
-                  </button>
-                  <button
-                    className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
-                    onClick={() => handleDelete(collection.id)}
-                  >
-                    Delete
-                  </button>
-                </td>
+                <td className="border py-3 px-6">{collection.weight}</td>
+                <td className="border py-3 px-6">{collection.fee}</td>
               </tr>
             ))}
           </tbody>
