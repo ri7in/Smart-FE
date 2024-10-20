@@ -46,7 +46,8 @@ const ReportsPage: React.FC = () => {
   const fetchBills = async () => {
     try {
       const response = await axios.get('http://localhost:8080/api/bills');
-      setBills(response.data.data);
+      setBills(response.data.results);
+      console.log(response.data.results);
     } catch (error) {
       console.error('Error fetching bills:', error);
     }
@@ -55,7 +56,7 @@ const ReportsPage: React.FC = () => {
   const fetchCollections = async () => {
     try {
       const response = await axios.get('http://localhost:8080/api/collections');
-      setCollections(response.data.data);
+      setCollections(response.data.results);
     } catch (error) {
       console.error('Error fetching collections:', error);
     }
@@ -124,8 +125,8 @@ const ReportsPage: React.FC = () => {
         nonRecyclableWaste,
         recyclingRate,
         carbonReduction,
-        topAreas: wasteBins.slice(0, 3).map((bin: any) => ({ name: bin.location, rate: Math.random() * 20 + 80 })),
-        improvementAreas: wasteBins.slice(-2).map((bin: any) => ({ name: bin.location, rate: Math.random() * 20 + 60 })),
+        topAreas: wasteBins.slice(0, 3)?.map((bin: any) => ({ name: bin.location, rate: Math.random() * 20 + 80 })),
+        improvementAreas: wasteBins.slice(-2)?.map((bin: any) => ({ name: bin.location, rate: Math.random() * 20 + 60 })),
       };
 
       generatePDF(reportData);
@@ -219,7 +220,7 @@ const ReportsPage: React.FC = () => {
       <div className="mt-8">
         <h2 className="text-xl font-semibold mb-4 text-gray-800">Available Reports</h2>
         <ul className="space-y-2">
-          {bills.slice(0, 4).map((bill) => (
+          {bills.slice(0, 4)?.map((bill) => (
             <ReportItem
               key={bill.id}
               title={`Bill #${bill.id} Report`}

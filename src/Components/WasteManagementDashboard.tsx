@@ -348,7 +348,7 @@ const ResidentTable: React.FC<ResidentTableProps> = ({
         Recent Residents
       </h2>
       <ul className="space-y-2">
-        {residents.slice(0, 5).map((resident, index) => (
+        {residents?.slice(0, 5)?.map((resident, index) => (
           <li key={index} className="text-sm text-gray-600">
             {resident.name} - {resident.address}
           </li>
@@ -408,7 +408,7 @@ const InquiriesList: React.FC<InquiriesListProps> = ({
         Recent Inquiries
       </h2>
       <ul className="space-y-2">
-        {inquiryList.slice(0, 5).map((inquiry) => (
+        {inquiryList.slice(0, 5)?.map((inquiry) => (
           <li key={inquiry.id} className="flex items-center justify-between">
             <span className="text-sm text-gray-600">{inquiry.text}</span>
             <div className="flex items-center">
