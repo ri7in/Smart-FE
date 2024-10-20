@@ -1,9 +1,36 @@
 import React from "react";
 
 const TrashActions: React.FC = () => {
+  const wasteBinId = 1; // Replace with the actual ID of the waste bin
+
   const handleTrashAdded = () => {
     console.log("Trash added");
-    // Implement your logic for "Trash Added" action here
+
+    // Define the increment value
+    const increment = 10;
+
+    // Make the PATCH request
+    fetch(
+      `http://your-api-url/api/waste-bins/${wasteBinId}/level/increase?increment=${increment}`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    )
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        console.log("Waste bin level increased:", data);
+      })
+      .catch((error) => {
+        console.error("Error increasing waste bin level:", error);
+      });
   };
 
   const handleTrashCollected = () => {
