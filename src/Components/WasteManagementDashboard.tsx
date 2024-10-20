@@ -178,19 +178,12 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => (
   </div>
 );
 
-interface SidebarItemProps {
+const SidebarItem: React.FC<{
   icon: React.ReactNode;
   text: string;
   active: boolean;
   onClick: () => void;
-}
-
-const SidebarItem: React.FC<SidebarItemProps> = ({
-  icon,
-  text,
-  active,
-  onClick,
-}) => (
+}> = ({ icon, text, active, onClick }) => (
   <div
     className={`flex items-center p-2 rounded mb-2 cursor-pointer transition-colors duration-200 ${
       active ? "bg-green-600" : "hover:bg-green-600"
@@ -268,13 +261,11 @@ const Header: React.FC = () => {
   );
 };
 
-interface StatCardProps {
+const StatCard: React.FC<{
   title: string;
   value: string | number;
   icon: React.ReactNode;
-}
-
-const StatCard: React.FC<StatCardProps> = ({ title, value, icon }) => (
+}> = ({ title, value, icon }) => (
   <div className="bg-white p-4 rounded-lg shadow-md flex items-center justify-between transition-all duration-300 hover:shadow-lg">
     <div>
       <h3 className="text-sm font-medium text-gray-500">{title}</h3>
@@ -284,11 +275,9 @@ const StatCard: React.FC<StatCardProps> = ({ title, value, icon }) => (
   </div>
 );
 
-interface WasteAnalysisProps {
+const WasteAnalysis: React.FC<{
   data: Array<{ name: string; value: number; color: string }>;
-}
-
-const WasteAnalysis: React.FC<WasteAnalysisProps> = ({ data }) => (
+}> = ({ data }) => (
   <div className="bg-white p-4 rounded-lg shadow-md">
     <h2 className="text-lg font-semibold mb-4 text-gray-800">Waste Analysis</h2>
     <ResponsiveContainer width="100%" height={200}>
@@ -324,11 +313,9 @@ const WasteAnalysis: React.FC<WasteAnalysisProps> = ({ data }) => (
   </div>
 );
 
-interface CollectionTrendsProps {
+const CollectionTrends: React.FC<{
   data: Array<{ name: string; collections: number }>;
-}
-
-const CollectionTrends: React.FC<CollectionTrendsProps> = ({ data }) => (
+}> = ({ data }) => (
   <div className="bg-white p-4 rounded-lg shadow-md">
     <h2 className="text-lg font-semibold mb-4 text-gray-800">
       Collection Trends
@@ -344,66 +331,36 @@ const CollectionTrends: React.FC<CollectionTrendsProps> = ({ data }) => (
   </div>
 );
 
-interface ResidentTableProps {
+const ResidentTable: React.FC<{
   residents: Array<{ name: string; address: string; habits: string }>;
   onSeeAll?: () => void;
-}
+}> = ({ residents, onSeeAll }) => (
+  <div className="bg-white p-4 rounded-lg shadow-md">
+    <h2 className="text-lg font-semibold mb-4 text-gray-800">
+      Recent Residents
+    </h2>
+    <ul className="space-y-2">
+      {residents.slice(0, 5).map((resident, index) => (
+        <li key={index} className="text-sm text-gray-600">
+          {resident.name} - {resident.address}
+        </li>
+      ))}
+    </ul>
+    {onSeeAll && (
+      <button
+        onClick={onSeeAll}
+        className="mt-4 text-sm text-blue-600 hover:text-blue-800"
+      >
+        See all residents
+      </button>
+    )}
+  </div>
+);
 
-const ResidentTable: React.FC<ResidentTableProps> = ({
-  residents,
-  onSeeAll,
-}) => {
-  // Make sure to use both residents and onSeeAll in the component
-  return (
-    <div className="bg-white p-4 rounded-lg shadow-md">
-      <h2 className="text-lg font-semibold mb-4 text-gray-800">
-        Recent Residents
-      </h2>
-      <ul className="space-y-2">
-        {residents?.slice(0, 5)?.map((resident, index) => (
-          <li key={index} className="text-sm text-gray-600">
-            {resident.name} - {resident.address}
-          </li>
-        ))}
-      </ul>
-      {onSeeAll && (
-        <button
-          onClick={onSeeAll}
-          className="mt-4 text-sm text-blue-600 hover:text-blue-800"
-        >
-          See all residents
-        </button>
-      )}
-    </div>
-  );
-};
-
-// const BillingSettings: React.FC = () => {
-//   const [billingModel, setBillingModel] = useState('flat');
-//   const [flatFee, setFlatFee] = useState('1000');
-//   const [perKgPrice, setPerKgPrice] = useState('10');
-//   const [recyclableRate, setRecyclableRate] = useState('5');
-
-//   const handlePriceChange = (setter: React.Dispatch<React.SetStateAction<string>>) => (event: React.ChangeEvent<HTMLInputElement>) => {
-//     const value = Math.max(0, Number(event.target.value));
-//     setter(value.toString());
-//   };
-
-//   return (
-//     <div className="bg-white p-4 rounded-lg shadow-md">
-//       {/* BillingSettings content */}
-//     </div>
-//   );
-// };
-
-interface InquiriesListProps {
+const InquiriesList: React.FC<{
   inquiries: Array<{ id: number; text: string; resolved: boolean }>;
   onSeeAll?: () => void;
-}
-const InquiriesList: React.FC<InquiriesListProps> = ({
-  inquiries,
-  onSeeAll,
-}) => {
+}> = ({ inquiries, onSeeAll }) => {
   const [inquiryList, setInquiryList] = useState(inquiries);
 
   const toggleResolved = (inquiry) => {
@@ -420,9 +377,9 @@ const InquiriesList: React.FC<InquiriesListProps> = ({
 
     console.log("my inqury", newInquery);
 
-    inquiryService.update(inquiry.id, newInquery).then(res => {
+    inquiryService.update(inquiry.id, newInquery).then((res) => {
       console.log(res);
-    })
+    });
   };
 
   const { data } = useInqury();
@@ -474,13 +431,11 @@ const InquiriesList: React.FC<InquiriesListProps> = ({
   );
 };
 
-interface ModalProps {
+const Modal: React.FC<{
   title: string;
   children: React.ReactNode;
   onClose: () => void;
-}
-
-const Modal: React.FC<ModalProps> = ({ title, children, onClose }) => (
+}> = ({ title, children, onClose }) => (
   <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
     <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl">
       <div className="flex justify-between items-center p-6 border-b">

@@ -6,7 +6,8 @@ import useHistory from "../hooks/useHistory";
 
 import {
   Home,
-  Users,
+  Trash,
+  BadgeDollarSign,
   FileText,
   BarChart as BarChartIcon,
   PieChart as PieChartIcon,
@@ -15,8 +16,26 @@ import {
   Settings,
   Trash2,
   Send,
+  Send,
   UserRoundIcon,
 } from "lucide-react";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+} from "recharts";
+import { useNavigate } from "react-router-dom";
+import NavItem from "./atoms/NavItem/NavItem";
+import Header from "./molecules/Header/Header";
+import LogoutButton from "./LogoutButton";
 import {
   BarChart,
   Bar,
@@ -101,19 +120,26 @@ const UserDashboard = () => {
     <div className="bg-[#157145] text-white h-screen w-64 p-4 flex flex-col">
       <h1 className="text-2xl font-bold mb-8">SmartBin</h1>
       <nav className="flex-grow">
-        <SidebarItem
+        <NavItem
           icon={<Home />}
           text="Dashboard"
           active={activeTab === "dashboard"}
-          onClick={() => setActiveTab("dashboard")}
+          onClick={() => handleNavigation("dashboard", "/user")}
         />
-        <SidebarItem
-          icon={<Users />}
+        <NavItem
+          icon={<Trash />}
           text="Collections"
           active={activeTab === "collections"}
-          onClick={() => setActiveTab("collections")}
+          onClick={() => handleNavigation("collections", "/collections")}
+        />
+        <NavItem
+          icon={<BadgeDollarSign />}
+          text="Payment"
+          active={activeTab === "payment"}
+          onClick={() => handleNavigation("payment", "/payment")}
         />
       </nav>
+      <LogoutButton />
     </div>
   );
 
@@ -214,7 +240,7 @@ const UserDashboard = () => {
           <h1 className="text-2xl font-semibold mb-6 text-gray-800">
             Welcome to your Dashboard!
           </h1>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-6 mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4 gap-6 mb-6">
             <StatCard
               title="Total Bins"
               value={wasteBins.length}
@@ -235,6 +261,10 @@ const UserDashboard = () => {
               value="22/10/2024"
               icon={<FileText size={24} />}
             />
+          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+            <WasteTypeChart data={chartData} />
+            <BinLevelPieChart data={pieChartData} colors={COLORS} />
             <BinLevelCard
               binNumber={wasteBins[0].binNumber}
               level={wasteBins[0].currentLevel}
@@ -242,6 +272,7 @@ const UserDashboard = () => {
             />
           </div>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <WasteBinHistoryTable history={binHistory} />
             <InquiryCard
               title={inquiryTitle}
               message={inquiryMessage}
@@ -263,8 +294,6 @@ const UserDashboard = () => {
     </div>
   );
 };
-
-// ... (Sidebar, SidebarItem, Header components remain unchanged)
 
 const StatCard = ({
   title,
@@ -437,6 +466,12 @@ const BinLevelPieChart = ({
 );
 
 const InquiryCard = ({
+  title,
+  message,
+  setTitle,
+  setMessage,
+  onSend,
+  sent,
   sent,
 }: {
   title: string;
