@@ -4,6 +4,7 @@ import inquiryService from "../services/inquiryService";
 import useWaste from "../hooks/useWaste";
 import useHistory from "../hooks/useHistory";
 
+
 import {
   Home,
   Trash,
@@ -16,26 +17,11 @@ import {
   Settings,
   Trash2,
   Send,
-  Send,
   UserRoundIcon,
 } from "lucide-react";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
-} from "recharts";
-import { useNavigate } from "react-router-dom";
 import NavItem from "./atoms/NavItem/NavItem";
-import Header from "./molecules/Header/Header";
 import LogoutButton from "./LogoutButton";
+
 import {
   BarChart,
   Bar,
@@ -281,13 +267,13 @@ const UserDashboard = () => {
               onSend={handleInquirySend}
               sent={inquirySent}
             />
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+            {/* <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
               <WasteBinHistoryTable history={binHistory} />
               <div className="grid grid-rows-2 gap-6">
                 <WasteTypeChart data={chartData} />
                 <BinLevelPieChart data={pieChartData} colors={COLORS} />
               </div>
-            </div>
+            </div> */}
           </div>
         </main>
       </div>
@@ -466,12 +452,7 @@ const BinLevelPieChart = ({
 );
 
 const InquiryCard = ({
-  title,
-  message,
-  setTitle,
-  setMessage,
   onSend,
-  sent,
   sent,
 }: {
   title: string;
