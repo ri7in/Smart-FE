@@ -5,10 +5,10 @@ import { useNavigate } from "react-router-dom";
 interface FormData {
   requestTime: string;
   collectionTime: string;
-  predictedTrashWeight: string;
+  weight: string;
   status: string;
   fee: string;
-  wasteAccount: number;
+  wasteAccountId: number;
 }
 
 const ProgressIndicator: React.FC = () => (
@@ -23,10 +23,10 @@ const SpecialWasteForm: React.FC = () => {
   const [formData, setFormData] = useState<FormData>({
     requestTime: "",
     collectionTime: "",
-    predictedTrashWeight: "",
+    weight: "",
     status: "Pending",
     fee: "500",
-    wasteAccount: 1,
+    wasteAccountId: 1,
   });
 
   const navigate = useNavigate();
@@ -56,12 +56,21 @@ const SpecialWasteForm: React.FC = () => {
       requestTime: currentRequestTime,
     };
 
+    console.log("Special collection DTO:", specialCollectionDTO);
+
     try {
       const response = await axios.post(
         "http://localhost:8080/api/special-collections",
         specialCollectionDTO
       );
+
       console.log("Special collection created:", response.data);
+
+      const params = new URLSearchParams(
+        specialCollectionDTO as any
+      ).toString();
+      navigate(`/reviewForm?${params}`);
+
       setSuccess(true);
     } catch (err) {
       setError(
