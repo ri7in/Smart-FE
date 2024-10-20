@@ -9,6 +9,8 @@ import Dashboard from "./components/WasteManagementDashboard";
 import ReportsPage from "./Pages/ReportsPage";
 import UserCollectionsLayout from "./components/organisms/UserCollectionsLayout/UserCollectionsLayout";
 import DashboardLayout from "./components/organisms/DashboardLayout/DashboardLayout";
+import SpecialForm from "./Pages/SpecialForm";
+import ReviewFormPage from "./Pages/ReviewForm";
 
 const router = createBrowserRouter([
   {
@@ -30,6 +32,14 @@ const router = createBrowserRouter([
   {
     path: "/collections",
     element: <UserCollectionsLayout />,
+  },
+  {
+    path: "/specialCollectionForm",
+    element: <SpecialForm />,
+  },
+  {
+    path: "/reviewForm",
+    element: <ReviewFormPage />,
   },
   {
     path: "/manager",

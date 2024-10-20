@@ -1,16 +1,19 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 interface CollectionDTO {
   id: number;
   wasteBinId: number;
-  collectionTime: number[]; // Updated type to match the API response
+  collectionTime: number[];
   weight: number;
   fee: number;
 }
 
 const CollectionTable: React.FC = () => {
   const [collections, setCollections] = useState<CollectionDTO[]>([]);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchCollections();
@@ -22,7 +25,6 @@ const CollectionTable: React.FC = () => {
       setCollections(
         Array.isArray(response.data.results) ? response.data.results : []
       );
-      console.log("Huththo");
     } catch (error) {
       console.error("Error fetching collections:", error);
     }
@@ -41,8 +43,18 @@ const CollectionTable: React.FC = () => {
     console.log("Edit collection:", collection);
   };
 
+  const navigateToForm = () => {
+    navigate("/specialCollectionForm");
+  };
+
   return (
     <div>
+      <button
+        className="btn bg-green-500 text-white font-bold px-6 py-2 rounded-md mt-4 mb-4 w-full"
+        onClick={navigateToForm}
+      >
+        Schedule a Special Collection
+      </button>
       <h2 className="text-2xl font-bold mb-4">Collection List</h2>
       {collections.length === 0 ? (
         <p>No collections available.</p>
