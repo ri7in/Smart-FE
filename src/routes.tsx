@@ -11,6 +11,7 @@ import UserCollectionsLayout from "./Components/organisms/UserCollectionsLayout/
 import SpecialForm from "./Pages/SpecialForm";
 import ReviewFormPage from "./Pages/ReviewForm";
 import UserDashboard from "./Components/UserDashboard";
+import PaymentPage from "./Pages/PaymentPage";
 
 const router = createBrowserRouter([
   {
@@ -48,6 +49,10 @@ const router = createBrowserRouter([
   {
     path: "/managerreport",
     element: <ReportsPage />,
+  },
+  {
+    path: "/payment",
+    element: <PaymentPage />,
   },
 ]);
 
