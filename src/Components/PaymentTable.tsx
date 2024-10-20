@@ -93,11 +93,11 @@ const PaymentTable: React.FC = () => {
                 <span
                   className={`py-1 px-3 rounded-full text-s ${
                     bill.paid
-                      ? "bg-green-200 text-green-600"
-                      : "bg-red-200 text-red-600"
+                      ? "bg-red-200 text-red-600"
+                      : "bg-green-200 text-green-600"
                   }`}
                 >
-                  {bill.paid ? "Paid" : "Unpaid"}
+                  {bill.paid ? "not debited" : "debited"}
                 </span>
               </td>
             </tr>

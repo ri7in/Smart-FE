@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import {
   Home,
   Users,
@@ -21,48 +22,64 @@ import {
   Cell,
 } from "recharts";
 import ReportsPage from "../Pages/ReportsPage";
+import useInqury from "../hooks/useInqury";
+import inquiryService from "../services/inquiryService";
+
+interface SidebarProps {
+  activeTab: string;
+  setActiveTab: (tab: string) => void;
+}
 
 const Dashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState("dashboard");
   const [showAllResidents, setShowAllResidents] = useState(false);
   const [showAllInquiries, setShowAllInquiries] = useState(false);
+  const [residents, setResidents] = useState([]);
+  const [stats, setStats] = useState({
+    totalResidents: 0,
+    totalWasteCollected: 0,
+    totalEarnings: 0,
+    recyclingRate: 0,
+  });
+  const [wasteAnalysisData, setWasteAnalysisData] = useState([]);
+  const [collectionTrendsData, setCollectionTrendsData] = useState([]);
+  const [inquiries, setInquiries] = useState([]);
 
-  // Static data
-  const residents = [
-    { name: "John Doe", address: "123 Main St", habits: "Recycling" },
-    { name: "Jane Smith", address: "456 Elm St", habits: "Composting" },
-    { name: "Alice Johnson", address: "789 Oak St", habits: "Regular" },
-    { name: "Bob Brown", address: "101 Pine St", habits: "Recycling" },
-    { name: "Charlie Davis", address: "202 Maple St", habits: "Regular" },
-  ];
+  useEffect(() => {
+    fetchDashboardData();
+  }, []);
 
-  const stats = {
-    totalResidents: 100,
-    totalWasteCollected: 5000,
-    totalEarnings: 150000,
-    recyclingRate: 70,
+  const fetchDashboardData = async () => {
+    try {
+      const residentsResponse = await axios.get(
+        "http://localhost:8080/api/residents"
+      );
+      setResidents(residentsResponse.data.data);
+
+      const statsResponse = await axios.get(
+        "http://localhost:8080/api/dashboard/stats"
+      );
+      setStats(statsResponse.data.data);
+
+      const wasteAnalysisResponse = await axios.get(
+        "http://localhost:8080/api/dashboard/waste-analysis"
+      );
+      setWasteAnalysisData(wasteAnalysisResponse.data.data);
+
+      const collectionTrendsResponse = await axios.get(
+        "http://localhost:8080/api/dashboard/collection-trends"
+      );
+      setCollectionTrendsData(collectionTrendsResponse.data.data);
+
+      const inquiriesResponse = await axios.get(
+        "http://localhost:8080/api/inquiries"
+      );
+      console.log(inquiriesResponse);
+      setInquiries(inquiriesResponse.data.data);
+    } catch (error) {
+      console.error("Error fetching dashboard data:", error);
+    }
   };
-
-  const wasteAnalysisData = [
-    { name: "Plastic", value: 400, color: "#0088FE" },
-    { name: "Organic", value: 300, color: "#00C49F" },
-    { name: "Metal", value: 200, color: "#FFBB28" },
-    { name: "Paper", value: 100, color: "#FF8042" },
-  ];
-
-  const collectionTrendsData = [
-    { name: "Jan", collections: 30 },
-    { name: "Feb", collections: 40 },
-    { name: "Mar", collections: 35 },
-    { name: "Apr", collections: 50 },
-    { name: "May", collections: 70 },
-  ];
-
-  const inquiries = [
-    { id: 1, text: "Missing waste collection", resolved: false },
-    { id: 2, text: "Request for special collection", resolved: true },
-    { id: 3, text: "Service feedback", resolved: false },
-  ];
 
   return (
     <div className="flex h-screen bg-gray-100">
@@ -135,10 +152,7 @@ const Dashboard: React.FC = () => {
   );
 };
 
-const Sidebar: React.FC<{
-  activeTab: string;
-  setActiveTab: (tab: string) => void;
-}> = ({ activeTab, setActiveTab }) => (
+const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => (
   <div className="bg-[#157145] text-white h-screen w-64 p-4 flex flex-col">
     <h1 className="text-2xl font-bold mb-8">SmartBin</h1>
     <nav className="flex-grow">
@@ -349,13 +363,30 @@ const InquiriesList: React.FC<{
 }> = ({ inquiries, onSeeAll }) => {
   const [inquiryList, setInquiryList] = useState(inquiries);
 
-  const toggleResolved = (id: number) => {
-    setInquiryList((prev) =>
-      prev.map((inquiry) =>
-        inquiry.id === id ? { ...inquiry, resolved: true } : inquiry
-      )
-    );
+  const toggleResolved = (inquiry) => {
+    // setInquiryList((prev) =>
+    //   prev.map((inquiry) =>
+    //     inquiry.id === id ? { ...inquiry, resolved: true } : inquiry
+    //   )
+    // );
+
+    const newInquery = {
+      ...inquiry,
+      status: "Resolved",
+    };
+
+    console.log("my inqury", newInquery);
+
+    inquiryService.update(inquiry.id, newInquery).then((res) => {
+      console.log(res);
+    });
   };
+
+  const { data } = useInqury();
+
+  console.log(data?.results);
+
+  const resultsArray = data?.results;
 
   return (
     <div className="bg-white p-4 rounded-lg shadow-md">
@@ -363,13 +394,13 @@ const InquiriesList: React.FC<{
         Recent Inquiries
       </h2>
       <ul className="space-y-2">
-        {inquiryList.slice(0, 5).map((inquiry) => (
+        {resultsArray?.map((inquiry) => (
           <li key={inquiry.id} className="flex items-center justify-between">
-            <span className="text-sm text-gray-600">{inquiry.text}</span>
+            <span className="text-sm text-gray-600">{inquiry.message}</span>
             <div className="flex items-center">
               <span
                 className={`text-xs px-2 py-1 rounded ${
-                  inquiry.resolved
+                  inquiry.status
                     ? "bg-green-100 text-green-800"
                     : "bg-yellow-100 text-yellow-800"
                 }`}
@@ -378,7 +409,7 @@ const InquiriesList: React.FC<{
               </span>
               {!inquiry.resolved && (
                 <button
-                  onClick={() => toggleResolved(inquiry.id)}
+                  onClick={() => toggleResolved(inquiry)}
                   className="ml-2 text-xs text-blue-600 hover:text-blue-800 px-2 py-1 rounded border border-blue-600"
                 >
                   Resolved

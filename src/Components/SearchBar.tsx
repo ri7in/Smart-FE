@@ -23,7 +23,9 @@ const SearchBar: React.FC = () => {
       const response = await axios.get(
         `http://localhost:8080/api/bills/${searchId}`
       );
-      setBill(response.data);
+
+      console.log("Bill response:", response);
+      setBill(response.data.results[0]);
       setError(null);
     } catch (err) {
       setBill(null);
@@ -70,10 +72,10 @@ const SearchBar: React.FC = () => {
             {bill.amount ? bill.amount.toFixed(2) : "N/A"}
           </p>
           <p>
-            <strong>Status:</strong> {bill.isPaid ? "Paid" : "Unpaid"}
+            <strong>Status:</strong> {bill.isPaid ? "not debited" : "debited"}
           </p>
           <p>
-            <strong>Waste Account ID:</strong> {bill.wasteAccount?.id ?? "N/A"}
+            {/* <strong>Waste Account ID:</strong> {bill.wasteAccount?.id ?? "N/A"} */}
           </p>
         </div>
       )}
