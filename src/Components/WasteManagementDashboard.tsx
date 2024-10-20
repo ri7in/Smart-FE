@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import {
   Home,
   Users,
@@ -8,7 +9,7 @@ import {
   Bell,
   Search,
   Settings,
-} from "lucide-react";
+} from 'lucide-react';
 import {
   BarChart,
   Bar,
@@ -19,13 +20,125 @@ import {
   PieChart,
   Pie,
   Cell,
-} from "recharts";
-import ReportsPage from "../Pages/ReportsPage";
+} from 'recharts';
+import ReportsPage from '../Pages/ReportsPage';
 
 interface SidebarProps {
   activeTab: string;
   setActiveTab: (tab: string) => void;
 }
+
+const Dashboard: React.FC = () => {
+  const [activeTab, setActiveTab] = useState('dashboard');
+  const [showAllResidents, setShowAllResidents] = useState(false);
+  const [showAllInquiries, setShowAllInquiries] = useState(false);
+  const [residents, setResidents] = useState([]);
+  const [stats, setStats] = useState({
+    totalResidents: 0,
+    totalWasteCollected: 0,
+    totalEarnings: 0,
+    recyclingRate: 0,
+  });
+  const [wasteAnalysisData, setWasteAnalysisData] = useState([]);
+  const [collectionTrendsData, setCollectionTrendsData] = useState([]);
+  const [inquiries, setInquiries] = useState([]);
+
+  useEffect(() => {
+    fetchDashboardData();
+  }, []);
+
+  const fetchDashboardData = async () => {
+    try {
+      const residentsResponse = await axios.get('http://localhost:8080/api/residents');
+      setResidents(residentsResponse.data.data);
+
+      const statsResponse = await axios.get('http://localhost:8080/api/dashboard/stats');
+      setStats(statsResponse.data.data);
+
+      const wasteAnalysisResponse = await axios.get('http://localhost:8080/api/dashboard/waste-analysis');
+      setWasteAnalysisData(wasteAnalysisResponse.data.data);
+
+      const collectionTrendsResponse = await axios.get('http://localhost:8080/api/dashboard/collection-trends');
+      setCollectionTrendsData(collectionTrendsResponse.data.data);
+
+      const inquiriesResponse = await axios.get('http://localhost:8080/api/dashboard/inquiries');
+      setInquiries(inquiriesResponse.data.data);
+    } catch (error) {
+      console.error('Error fetching dashboard data:', error);
+    }
+  };
+
+  return (
+    <div className="flex h-screen bg-gray-100">
+      <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
+      <div className="flex-1 flex flex-col overflow-hidden">
+        <Header />
+        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 p-6">
+          {activeTab === 'dashboard' && (
+            <>
+              <h1 className="text-2xl font-semibold mb-6 text-gray-800">
+                Dashboard Overview
+              </h1>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+                <StatCard
+                  title="Total Residents"
+                  value={stats.totalResidents}
+                  icon={<Users size={24} />}
+                />
+                <StatCard
+                  title="Total Waste Collected"
+                  value={`${stats.totalWasteCollected} kg`}
+                  icon={<BarChartIcon size={24} />}
+                />
+                <StatCard
+                  title="Total Earnings"
+                  value={`${stats.totalEarnings} LKR`}
+                  icon={<PieChartIcon size={24} />}
+                />
+                <StatCard
+                  title="Recycling Rate"
+                  value={`${stats.recyclingRate}%`}
+                  icon={<FileText size={24} />}
+                />
+              </div>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                <WasteAnalysis data={wasteAnalysisData} />
+                <CollectionTrends data={collectionTrendsData} />
+              </div>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <ResidentTable
+                  residents={residents}
+                  onSeeAll={() => setShowAllResidents(true)}
+                />
+                <InquiriesList
+                  inquiries={inquiries}
+                  onSeeAll={() => setShowAllInquiries(true)}
+                />
+              </div>
+            </>
+          )}
+          {activeTab === 'residents' && (
+            <h1 className="text-2xl font-semibold mb-6 text-gray-800">
+              Residents
+            </h1>
+          )}
+          {activeTab === 'reports' && <ReportsPage />}
+        </main>
+      </div>
+      {showAllResidents && (
+        <Modal title="All Residents" onClose={() => setShowAllResidents(false)}>
+          <ResidentTable residents={residents} />
+        </Modal>
+      )}
+      {showAllInquiries && (
+        <Modal title="All Inquiries" onClose={() => setShowAllInquiries(false)}>
+          <InquiriesList inquiries={inquiries} />
+        </Modal>
+      )}
+    </div>
+  );
+};
+
 
 const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => (
   <div className="bg-[#157145] text-white h-screen w-64 p-4 flex flex-col">
@@ -275,29 +388,48 @@ interface InquiriesListProps {
   inquiries: Array<{ id: number; text: string; resolved: boolean }>;
   onSeeAll?: () => void;
 }
-
 const InquiriesList: React.FC<InquiriesListProps> = ({
   inquiries,
   onSeeAll,
 }) => {
+  const [inquiryList, setInquiryList] = useState(inquiries);
+
+  const toggleResolved = (id: number) => {
+    setInquiryList((prev) =>
+      prev.map((inquiry) =>
+        inquiry.id === id ? { ...inquiry, resolved: true } : inquiry
+      )
+    );
+  };
+
   return (
     <div className="bg-white p-4 rounded-lg shadow-md">
       <h2 className="text-lg font-semibold mb-4 text-gray-800">
         Recent Inquiries
       </h2>
       <ul className="space-y-2">
-        {inquiries.slice(0, 5).map((inquiry) => (
+        {inquiryList.slice(0, 5).map((inquiry) => (
           <li key={inquiry.id} className="flex items-center justify-between">
             <span className="text-sm text-gray-600">{inquiry.text}</span>
-            <span
-              className={`text-xs px-2 py-1 rounded ${
-                inquiry.resolved
-                  ? "bg-green-100 text-green-800"
-                  : "bg-yellow-100 text-yellow-800"
-              }`}
-            >
-              {inquiry.resolved ? "Resolved" : "Pending"}
-            </span>
+            <div className="flex items-center">
+              <span
+                className={`text-xs px-2 py-1 rounded ${
+                  inquiry.resolved
+                    ? "bg-green-100 text-green-800"
+                    : "bg-yellow-100 text-yellow-800"
+                }`}
+              >
+                {inquiry.resolved ? "Resolved" : "Pending"}
+              </span>
+              {!inquiry.resolved && (
+                <button
+                  onClick={() => toggleResolved(inquiry.id)}
+                  className="ml-2 text-xs text-blue-600 hover:text-blue-800 px-2 py-1 rounded border border-blue-600"
+                >
+                  Resolved
+                </button>
+              )}
+            </div>
           </li>
         ))}
       </ul>
@@ -308,134 +440,6 @@ const InquiriesList: React.FC<InquiriesListProps> = ({
         >
           See all inquiries
         </button>
-      )}
-    </div>
-  );
-};
-
-const Dashboard: React.FC = () => {
-  const [activeTab, setActiveTab] = useState("dashboard");
-  const [showAllResidents, setShowAllResidents] = useState(false);
-  const [showAllInquiries, setShowAllInquiries] = useState(false);
-
-  const stats = {
-    totalResidents: 300,
-    totalBins: 150,
-    totalCollections: 120,
-    totalWasteCollected: 1800, // in kg
-    totalEarnings: 45000, // in LKR
-    unpaidBills: 10,
-    averageWaste: 12, // in kg
-    averageWastePerBin: (1800 / 150).toFixed(2), // in kg
-    recyclingRate: 25, // percentage
-    monthlyCollectionRate: 95, // percentage
-    upcomingSpecialCollections: 5,
-  };
-
-  const wasteAnalysisData = [
-    { name: "Food Waste", value: 40, color: "#FF8042" },
-    { name: "Paper Waste", value: 20, color: "#00C49F" },
-    { name: "Plastic Waste", value: 25, color: "#FFBB28" },
-    { name: "Metal Waste", value: 10, color: "#0088FE" },
-    { name: "Other Waste", value: 5, color: "#FF6384" },
-  ];
-
-  const collectionTrendsData = [
-    { name: "Mon", collections: 25 },
-    { name: "Tue", collections: 30 },
-    { name: "Wed", collections: 28 },
-    { name: "Thu", collections: 32 },
-    { name: "Fri", collections: 35 },
-    { name: "Sat", collections: 20 },
-    { name: "Sun", collections: 15 },
-  ];
-
-  const residents = [
-    { name: "John Doe", address: "123 Main St", habits: "Regular" },
-    { name: "Jane Smith", address: "456 Oak St", habits: "High" },
-    { name: "Saman Perera", address: "789 Pine St", habits: "Low" },
-    { name: "Nimal Kumara", address: "101 Maple St", habits: "Regular" },
-    { name: "Kumara Silva", address: "202 Elm St", habits: "High" },
-    { name: "Anushka Dias", address: "303 Cedar St", habits: "Regular" },
-    { name: "Dilshan Fernando", address: "404 Birch St", habits: "Low" },
-  ];
-
-  const inquiries = [
-    { id: 1, text: "Broken bin at Main St.", resolved: false },
-    { id: 2, text: "Missed collection on Monday.", resolved: false },
-    { id: 3, text: "Request for additional bin.", resolved: false },
-    { id: 4, text: "Complaint about collection timing.", resolved: false },
-    { id: 5, text: "Recycling information needed.", resolved: false },
-    { id: 6, text: "Billing discrepancy report.", resolved: false },
-    { id: 7, text: "Special collection request.", resolved: false },
-  ];
-
-  return (
-    <div className="flex h-screen bg-gray-100">
-      <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <Header />
-        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 p-6">
-          {activeTab === "dashboard" && (
-            <>
-              <h1 className="text-2xl font-semibold mb-6 text-gray-800">
-                Dashboard Overview
-              </h1>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-                <StatCard
-                  title="Total Residents"
-                  value={stats.totalResidents}
-                  icon={<Users size={24} />}
-                />
-                <StatCard
-                  title="Total Waste Collected"
-                  value={`${stats.totalWasteCollected} kg`}
-                  icon={<BarChartIcon size={24} />}
-                />
-                <StatCard
-                  title="Total Earnings"
-                  value={`${stats.totalEarnings} LKR`}
-                  icon={<PieChartIcon size={24} />}
-                />
-                <StatCard
-                  title="Recycling Rate"
-                  value={`${stats.recyclingRate}%`}
-                  icon={<FileText size={24} />}
-                />
-              </div>
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-                <WasteAnalysis data={wasteAnalysisData} />
-                <CollectionTrends data={collectionTrendsData} />
-              </div>
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <ResidentTable
-                  residents={residents}
-                  onSeeAll={() => setShowAllResidents(true)}
-                />
-                <InquiriesList
-                  inquiries={inquiries}
-                  onSeeAll={() => setShowAllInquiries(true)}
-                />
-              </div>
-            </>
-          )}
-          {activeTab === "residents" && (
-            <h1 className="text-2xl font-semibold mb-6 text-gray-800">
-              Residents
-            </h1>
-          )}
-          {activeTab === "reports" && <ReportsPage />}
-        </main>
-      </div>
-      {showAllResidents && (
-        <Modal title="All Residents" onClose={() => setShowAllResidents(false)}>
-          <ResidentTable residents={residents} />
-        </Modal>
-      )}
-      {showAllInquiries && (
-        <Modal title="All Inquiries" onClose={() => setShowAllInquiries(false)}>
-          <InquiriesList inquiries={inquiries} />
-        </Modal>
       )}
     </div>
   );
