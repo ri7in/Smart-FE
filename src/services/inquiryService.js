@@ -7,7 +7,7 @@ class inquiryService {
     return apiClient.post(inqury);
   }
   delete(inqury) {
-    return apiClient.delete(user);
+    return apiClient.delete(inqury);
   }
   update(param, config) {
     return apiClient.put(param, config);
