@@ -27,46 +27,181 @@ interface SidebarProps {
   activeTab: string;
   setActiveTab: (tab: string) => void;
 }
+interface SidebarItemProps {
+  icon: React.ReactNode;
+  text: string;
+  active: boolean;
+  onClick: () => void;
+}
+interface StatCardProps {
+  title: string;
+  value: string | number;
+  icon: React.ReactNode;
+}
+
+interface WasteAnalysisProps {
+  data: Array<{ name: string; value: number; color: string }>;
+}
+
+interface ModalProps {
+  title: string;
+  children: React.ReactNode;
+  onClose: () => void;
+}
+
+interface CollectionTrendsProps {
+  data: Array<{ name: string; collections: number }>;
+}
+
+interface ResidentTableProps {
+  residents: Array<{ name: string; address: string; habits: string }>;
+  onSeeAll?: () => void;
+}
+
+interface InquiriesListProps {
+  inquiries: Array<{ id: number; text: string; resolved: boolean }>;
+  onSeeAll?: () => void;
+}
+
+
+interface Resident {
+  name: string;
+  address: string;
+  habits: string;
+}
+
+interface Bill {
+  amount: number;
+  isPaid: boolean;
+}
+
+interface Collection {
+  amount: number;
+  date: string;
+  wasteType: 'ORGANIC' | 'RECYCLABLE' | 'NON_RECYCLABLE' | 'HAZARDOUS';
+  isSpecial: boolean;
+}
+
+interface WasteBin {
+  // Add properties as needed
+}
+
+interface Inquiry {
+  id: number;
+  text: string;
+  resolved: boolean;
+}
+
+
+interface DashboardStats {
+  totalResidents: number;
+  totalBins: number;
+  totalCollections: number;
+  totalWasteCollected: number;
+  totalEarnings: number;
+  unpaidBills: number;
+  averageWaste: number;
+  averageWastePerBin: number;
+  recyclingRate: number;
+  monthlyCollectionRate: number;
+  upcomingSpecialCollections: number;
+}
 
 const Dashboard: React.FC = () => {
-  const [activeTab, setActiveTab] = useState('dashboard');
+  const [activeTab, setActiveTab] = useState("dashboard");
   const [showAllResidents, setShowAllResidents] = useState(false);
   const [showAllInquiries, setShowAllInquiries] = useState(false);
-  const [residents, setResidents] = useState([]);
-  const [stats, setStats] = useState({
+  const [residents, setResidents] = useState<Resident[]>([]);
+  const [_bills, setBills] = useState<Bill[]>([]);
+  const [collections, setCollections] = useState<Collection[]>([]);
+    const [inquiries, _setInquiries] = useState<Inquiry[]>([]);
+  const [_wasteBins, setWasteBins] = useState<WasteBin[]>([]);
+  const [stats, setStats] = useState<DashboardStats>({
     totalResidents: 0,
+    totalBins: 0,
+    totalCollections: 0,
     totalWasteCollected: 0,
     totalEarnings: 0,
+    unpaidBills: 0,
+    averageWaste: 0,
+    averageWastePerBin: 0,
     recyclingRate: 0,
+    monthlyCollectionRate: 0,
+    upcomingSpecialCollections: 0,
   });
-  const [wasteAnalysisData, setWasteAnalysisData] = useState([]);
-  const [collectionTrendsData, setCollectionTrendsData] = useState([]);
-  const [inquiries, setInquiries] = useState([]);
 
   useEffect(() => {
-    fetchDashboardData();
+    fetchData();
   }, []);
 
-  const fetchDashboardData = async () => {
+  const fetchData = async () => {
     try {
-      const residentsResponse = await axios.get('http://localhost:8080/api/residents');
+      const residentsResponse = await axios.get<{ data: Resident[] }>('/api/residents');
       setResidents(residentsResponse.data.data);
 
-      const statsResponse = await axios.get('http://localhost:8080/api/dashboard/stats');
-      setStats(statsResponse.data.data);
+      const billsResponse = await axios.get<{ data: Bill[] }>('/api/bills');
+      setBills(billsResponse.data.data);
 
-      const wasteAnalysisResponse = await axios.get('http://localhost:8080/api/dashboard/waste-analysis');
-      setWasteAnalysisData(wasteAnalysisResponse.data.data);
+      const collectionsResponse = await axios.get<{ data: Collection[] }>('/api/collections');
+      setCollections(collectionsResponse.data.data);
 
-      const collectionTrendsResponse = await axios.get('http://localhost:8080/api/dashboard/collection-trends');
-      setCollectionTrendsData(collectionTrendsResponse.data.data);
+      const wasteBinsResponse = await axios.get<{ data: WasteBin[] }>('/api/waste-bins');
+      setWasteBins(wasteBinsResponse.data.data);
 
-      const inquiriesResponse = await axios.get('http://localhost:8080/api/dashboard/inquiries');
-      setInquiries(inquiriesResponse.data.data);
+      calculateStats(residentsResponse.data.data, billsResponse.data.data, collectionsResponse.data.data, wasteBinsResponse.data.data);
     } catch (error) {
-      console.error('Error fetching dashboard data:', error);
+      console.error('Error fetching data:', error);
     }
   };
+
+  const calculateStats = (residents: Resident[], bills: Bill[], collections: Collection[], wasteBins: WasteBin[]) => {
+    const totalResidents = residents.length;
+    const totalBins = wasteBins.length;
+    const totalCollections = collections.length;
+    const totalWasteCollected = collections.reduce((sum, collection) => sum + collection.amount, 0);
+    const totalEarnings = bills.reduce((sum, bill) => sum + bill.amount, 0);
+    const unpaidBills = bills.filter(bill => !bill.isPaid).length;
+    const averageWaste = totalWasteCollected / totalCollections || 0;
+    const averageWastePerBin = totalWasteCollected / totalBins || 0;
+    
+    const recyclingRate = collections.filter(c => c.wasteType === 'RECYCLABLE').length / totalCollections * 100 || 0;
+    const monthlyCollectionRate = (totalCollections / (totalResidents * 30)) * 100 || 0;
+    
+    const upcomingSpecialCollections = collections.filter(c => c.isSpecial && new Date(c.date) > new Date()).length;
+
+    setStats({
+      totalResidents,
+      totalBins,
+      totalCollections,
+      totalWasteCollected,
+      totalEarnings,
+      unpaidBills,
+      averageWaste,
+      averageWastePerBin,
+      recyclingRate,
+      monthlyCollectionRate,
+      upcomingSpecialCollections,
+    });
+  };
+
+  const wasteAnalysisData = [
+    { name: "Organic", value: collections.filter(c => c.wasteType === 'ORGANIC').length, color: "#FF8042" },
+    { name: "Recyclable", value: collections.filter(c => c.wasteType === 'RECYCLABLE').length, color: "#00C49F" },
+    { name: "Non-Recyclable", value: collections.filter(c => c.wasteType === 'NON_RECYCLABLE').length, color: "#FFBB28" },
+    { name: "Hazardous", value: collections.filter(c => c.wasteType === 'HAZARDOUS').length, color: "#FF6384" },
+  ];
+
+  const collectionTrendsData = collections.reduce((acc, collection) => {
+    const date = new Date(collection.date);
+    const day = date.toLocaleString('en-US', { weekday: 'short' });
+    const existingDay = acc.find(item => item.name === day);
+    if (existingDay) {
+      existingDay.collections++;
+    } else {
+      acc.push({ name: day, collections: 1 });
+    }
+    return acc;
+  }, [] as { name: string; collections: number }[]);
 
   return (
     <div className="flex h-screen bg-gray-100">
@@ -166,12 +301,7 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => (
   </div>
 );
 
-interface SidebarItemProps {
-  icon: React.ReactNode;
-  text: string;
-  active: boolean;
-  onClick: () => void;
-}
+
 
 const SidebarItem: React.FC<SidebarItemProps> = ({
   icon,
@@ -256,11 +386,7 @@ const Header: React.FC = () => {
   );
 };
 
-interface StatCardProps {
-  title: string;
-  value: string | number;
-  icon: React.ReactNode;
-}
+
 
 const StatCard: React.FC<StatCardProps> = ({ title, value, icon }) => (
   <div className="bg-white p-4 rounded-lg shadow-md flex items-center justify-between transition-all duration-300 hover:shadow-lg">
@@ -272,9 +398,7 @@ const StatCard: React.FC<StatCardProps> = ({ title, value, icon }) => (
   </div>
 );
 
-interface WasteAnalysisProps {
-  data: Array<{ name: string; value: number; color: string }>;
-}
+
 
 const WasteAnalysis: React.FC<WasteAnalysisProps> = ({ data }) => (
   <div className="bg-white p-4 rounded-lg shadow-md">
@@ -312,9 +436,7 @@ const WasteAnalysis: React.FC<WasteAnalysisProps> = ({ data }) => (
   </div>
 );
 
-interface CollectionTrendsProps {
-  data: Array<{ name: string; collections: number }>;
-}
+
 
 const CollectionTrends: React.FC<CollectionTrendsProps> = ({ data }) => (
   <div className="bg-white p-4 rounded-lg shadow-md">
@@ -332,10 +454,7 @@ const CollectionTrends: React.FC<CollectionTrendsProps> = ({ data }) => (
   </div>
 );
 
-interface ResidentTableProps {
-  residents: Array<{ name: string; address: string; habits: string }>;
-  onSeeAll?: () => void;
-}
+
 
 const ResidentTable: React.FC<ResidentTableProps> = ({
   residents,
@@ -384,10 +503,7 @@ const ResidentTable: React.FC<ResidentTableProps> = ({
 //   );
 // };
 
-interface InquiriesListProps {
-  inquiries: Array<{ id: number; text: string; resolved: boolean }>;
-  onSeeAll?: () => void;
-}
+
 const InquiriesList: React.FC<InquiriesListProps> = ({
   inquiries,
   onSeeAll,
@@ -445,11 +561,7 @@ const InquiriesList: React.FC<InquiriesListProps> = ({
   );
 };
 
-interface ModalProps {
-  title: string;
-  children: React.ReactNode;
-  onClose: () => void;
-}
+
 
 const Modal: React.FC<ModalProps> = ({ title, children, onClose }) => (
   <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
