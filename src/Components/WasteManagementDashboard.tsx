@@ -340,7 +340,7 @@ const ResidentTable: React.FC<{
       Recent Residents
     </h2>
     <ul className="space-y-2">
-      {residents.slice(0, 5).map((resident, index) => (
+      {residents?.slice(0, 5).map((resident, index) => (
         <li key={index} className="text-sm text-gray-600">
           {resident.name} - {resident.address}
         </li>

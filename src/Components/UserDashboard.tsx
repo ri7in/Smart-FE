@@ -4,7 +4,6 @@ import inquiryService from "../services/inquiryService";
 import useWaste from "../hooks/useWaste";
 import useHistory from "../hooks/useHistory";
 
-
 import {
   Home,
   Trash,
@@ -314,7 +313,7 @@ const BinLevelCard = ({
     </div>
     <p className="text-xl font-bold text-gray-800">{level}%</p>
     <p className="text-sm font-medium text-gray-500 mt-2">Current Fee</p>
-    <p className="text-lg font-bold text-gray-800">${currentFee}</p>
+    <p className="text-lg font-bold text-gray-800">LKR. {currentFee}</p>
   </div>
 );
 
@@ -386,6 +385,7 @@ const WasteBinHistoryTable = ({
               <Table.Cell>{entry.wasteCategory}</Table.Cell>
               <Table.Cell>{entry.isRecyclable ? "Yes" : "No"}</Table.Cell>
               <Table.Cell>{entry.capacity}</Table.Cell>
+              <Table.Cell>{entry.currentLevel}</Table.Cell>
             </Table.Row>
           ))}
         </Table.Body>
