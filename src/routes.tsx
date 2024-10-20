@@ -5,12 +5,12 @@ import {
 } from "react-router-dom";
 import LoginPage from "./Pages/LoginPage";
 import SignUpPage from "./Pages/SignUpPage";
-import Dashboard from "./components/WasteManagementDashboard";
+import Dashboard from "./Components/WasteManagementDashboard";
 import ReportsPage from "./Pages/ReportsPage";
-import UserCollectionsLayout from "./components/organisms/UserCollectionsLayout/UserCollectionsLayout";
-import DashboardLayout from "./components/organisms/DashboardLayout/DashboardLayout";
+import UserCollectionsLayout from "./Components/organisms/UserCollectionsLayout/UserCollectionsLayout";
 import SpecialForm from "./Pages/SpecialForm";
 import ReviewFormPage from "./Pages/ReviewForm";
+import UserDashboard from "./Components/UserDashboard";
 
 const router = createBrowserRouter([
   {
@@ -27,7 +27,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/user",
-    element: <DashboardLayout />,
+    element: <UserDashboard />,
   },
   {
     path: "/collections",
