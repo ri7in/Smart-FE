@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import {
   Home,
   Users,
@@ -9,7 +9,7 @@ import {
   Bell,
   Search,
   Settings,
-} from 'lucide-react';
+} from "lucide-react";
 import {
   BarChart,
   Bar,
@@ -20,8 +20,10 @@ import {
   PieChart,
   Pie,
   Cell,
-} from 'recharts';
-import ReportsPage from '../Pages/ReportsPage';
+} from "recharts";
+import ReportsPage from "../Pages/ReportsPage";
+import useInqury from "../hooks/useInqury";
+import inquiryService from "../services/inquiryService";
 
 interface SidebarProps {
   activeTab: string;
@@ -29,7 +31,7 @@ interface SidebarProps {
 }
 
 const Dashboard: React.FC = () => {
-  const [activeTab, setActiveTab] = useState('dashboard');
+  const [activeTab, setActiveTab] = useState("dashboard");
   const [showAllResidents, setShowAllResidents] = useState(false);
   const [showAllInquiries, setShowAllInquiries] = useState(false);
   const [residents, setResidents] = useState([]);
@@ -49,22 +51,33 @@ const Dashboard: React.FC = () => {
 
   const fetchDashboardData = async () => {
     try {
-      const residentsResponse = await axios.get('http://localhost:8080/api/residents');
+      const residentsResponse = await axios.get(
+        "http://localhost:8080/api/residents"
+      );
       setResidents(residentsResponse.data.data);
 
-      const statsResponse = await axios.get('http://localhost:8080/api/dashboard/stats');
+      const statsResponse = await axios.get(
+        "http://localhost:8080/api/dashboard/stats"
+      );
       setStats(statsResponse.data.data);
 
-      const wasteAnalysisResponse = await axios.get('http://localhost:8080/api/dashboard/waste-analysis');
+      const wasteAnalysisResponse = await axios.get(
+        "http://localhost:8080/api/dashboard/waste-analysis"
+      );
       setWasteAnalysisData(wasteAnalysisResponse.data.data);
 
-      const collectionTrendsResponse = await axios.get('http://localhost:8080/api/dashboard/collection-trends');
+      const collectionTrendsResponse = await axios.get(
+        "http://localhost:8080/api/dashboard/collection-trends"
+      );
       setCollectionTrendsData(collectionTrendsResponse.data.data);
 
-      const inquiriesResponse = await axios.get('http://localhost:8080/api/dashboard/inquiries');
+      const inquiriesResponse = await axios.get(
+        "http://localhost:8080/api/inquiries"
+      );
+      console.log(inquiriesResponse);
       setInquiries(inquiriesResponse.data.data);
     } catch (error) {
-      console.error('Error fetching dashboard data:', error);
+      console.error("Error fetching dashboard data:", error);
     }
   };
 
@@ -74,7 +87,7 @@ const Dashboard: React.FC = () => {
       <div className="flex-1 flex flex-col overflow-hidden">
         <Header />
         <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 p-6">
-          {activeTab === 'dashboard' && (
+          {activeTab === "dashboard" && (
             <>
               <h1 className="text-2xl font-semibold mb-6 text-gray-800">
                 Dashboard Overview
@@ -117,12 +130,12 @@ const Dashboard: React.FC = () => {
               </div>
             </>
           )}
-          {activeTab === 'residents' && (
+          {activeTab === "residents" && (
             <h1 className="text-2xl font-semibold mb-6 text-gray-800">
               Residents
             </h1>
           )}
-          {activeTab === 'reports' && <ReportsPage />}
+          {activeTab === "reports" && <ReportsPage />}
         </main>
       </div>
       {showAllResidents && (
@@ -138,7 +151,6 @@ const Dashboard: React.FC = () => {
     </div>
   );
 };
-
 
 const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => (
   <div className="bg-[#157145] text-white h-screen w-64 p-4 flex flex-col">
@@ -394,13 +406,30 @@ const InquiriesList: React.FC<InquiriesListProps> = ({
 }) => {
   const [inquiryList, setInquiryList] = useState(inquiries);
 
-  const toggleResolved = (id: number) => {
-    setInquiryList((prev) =>
-      prev.map((inquiry) =>
-        inquiry.id === id ? { ...inquiry, resolved: true } : inquiry
-      )
-    );
+  const toggleResolved = (inquiry) => {
+    // setInquiryList((prev) =>
+    //   prev.map((inquiry) =>
+    //     inquiry.id === id ? { ...inquiry, resolved: true } : inquiry
+    //   )
+    // );
+
+    const newInquery = {
+      ...inquiry,
+      status: "Resolved",
+    };
+
+    console.log("my inqury", newInquery);
+
+    inquiryService.update(inquiry.id, newInquery).then(res => {
+      console.log(res);
+    })
   };
+
+  const { data } = useInqury();
+
+  console.log(data?.results);
+
+  const resultsArray = data?.results;
 
   return (
     <div className="bg-white p-4 rounded-lg shadow-md">
@@ -408,13 +437,13 @@ const InquiriesList: React.FC<InquiriesListProps> = ({
         Recent Inquiries
       </h2>
       <ul className="space-y-2">
-        {inquiryList.slice(0, 5)?.map((inquiry) => (
+        {resultsArray?.map((inquiry) => (
           <li key={inquiry.id} className="flex items-center justify-between">
-            <span className="text-sm text-gray-600">{inquiry.text}</span>
+            <span className="text-sm text-gray-600">{inquiry.message}</span>
             <div className="flex items-center">
               <span
                 className={`text-xs px-2 py-1 rounded ${
-                  inquiry.resolved
+                  inquiry.status
                     ? "bg-green-100 text-green-800"
                     : "bg-yellow-100 text-yellow-800"
                 }`}
@@ -423,7 +452,7 @@ const InquiriesList: React.FC<InquiriesListProps> = ({
               </span>
               {!inquiry.resolved && (
                 <button
-                  onClick={() => toggleResolved(inquiry.id)}
+                  onClick={() => toggleResolved(inquiry)}
                   className="ml-2 text-xs text-blue-600 hover:text-blue-800 px-2 py-1 rounded border border-blue-600"
                 >
                   Resolved
