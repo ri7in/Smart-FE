@@ -1,5 +1,5 @@
 import React from "react";
-import UserDashboard from "../components/UserDashboard";
+import UserDashboard from "../Components/UserDashboard";
 
 const UserPage: React.FC = () => {
   return (
