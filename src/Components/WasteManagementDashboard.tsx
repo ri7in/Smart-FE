@@ -112,10 +112,13 @@ const Dashboard: React.FC = () => {
   const [showAllResidents, setShowAllResidents] = useState(false);
   const [showAllInquiries, setShowAllInquiries] = useState(false);
   const [residents, setResidents] = useState<Resident[]>([]);
-  const [_bills, setBills] = useState<Bill[]>([]);
+  const [bills, setBills] = useState<Bill[]>([]);
   const [collections, setCollections] = useState<Collection[]>([]);
-    const [inquiries, _setInquiries] = useState<Inquiry[]>([]);
-  const [_wasteBins, setWasteBins] = useState<WasteBin[]>([]);
+  const [wasteBins, setWasteBins] = useState<WasteBin[]>([]);
+  const [inquiries, setInquiries] = useState<Inquiry[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  
   const [stats, setStats] = useState<DashboardStats>({
     totalResidents: 0,
     totalBins: 0,
@@ -135,22 +138,34 @@ const Dashboard: React.FC = () => {
   }, []);
 
   const fetchData = async () => {
+    setIsLoading(true);
+    setError(null);
     try {
-      const residentsResponse = await axios.get<{ data: Resident[] }>('/api/residents');
+      const [residentsResponse, billsResponse, collectionsResponse, wasteBinsResponse, inquiriesResponse] = await Promise.all([
+        axios.get<{ data: Resident[] }>('/api/residents'),
+        axios.get<{ data: Bill[] }>('/api/bills'),
+        axios.get<{ data: Collection[] }>('/api/collections'),
+        axios.get<{ data: WasteBin[] }>('/api/waste-bins'),
+        axios.get<{ data: Inquiry[] }>('/api/inquiries')
+      ]);
+
       setResidents(residentsResponse.data.data);
-
-      const billsResponse = await axios.get<{ data: Bill[] }>('/api/bills');
       setBills(billsResponse.data.data);
-
-      const collectionsResponse = await axios.get<{ data: Collection[] }>('/api/collections');
       setCollections(collectionsResponse.data.data);
-
-      const wasteBinsResponse = await axios.get<{ data: WasteBin[] }>('/api/waste-bins');
       setWasteBins(wasteBinsResponse.data.data);
+      setInquiries(inquiriesResponse.data.data);
 
-      calculateStats(residentsResponse.data.data, billsResponse.data.data, collectionsResponse.data.data, wasteBinsResponse.data.data);
+      calculateStats(
+        residentsResponse.data.data,
+        billsResponse.data.data,
+        collectionsResponse.data.data,
+        wasteBinsResponse.data.data
+      );
     } catch (error) {
       console.error('Error fetching data:', error);
+      setError('An error occurred while fetching data. Please try again later.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -158,16 +173,17 @@ const Dashboard: React.FC = () => {
     const totalResidents = residents.length;
     const totalBins = wasteBins.length;
     const totalCollections = collections.length;
-    const totalWasteCollected = collections.reduce((sum, collection) => sum + collection.amount, 0);
+  const totalWasteCollected = collections ? collections.reduce((sum, collection) => sum + collection.amount, 0) : 0;
     const totalEarnings = bills.reduce((sum, bill) => sum + bill.amount, 0);
     const unpaidBills = bills.filter(bill => !bill.isPaid).length;
     const averageWaste = totalWasteCollected / totalCollections || 0;
     const averageWastePerBin = totalWasteCollected / totalBins || 0;
     
-    const recyclingRate = collections.filter(c => c.wasteType === 'RECYCLABLE').length / totalCollections * 100 || 0;
+    
+  const recyclingRate = collections ? collections.filter(c => c.wasteType === 'RECYCLABLE').length / totalCollections * 100 : 0;
     const monthlyCollectionRate = (totalCollections / (totalResidents * 30)) * 100 || 0;
     
-    const upcomingSpecialCollections = collections.filter(c => c.isSpecial && new Date(c.date) > new Date()).length;
+  const upcomingSpecialCollections = collections ? collections.filter(c => c.isSpecial && new Date(c.date) > new Date()).length : 0;
 
     setStats({
       totalResidents,
@@ -184,12 +200,12 @@ const Dashboard: React.FC = () => {
     });
   };
 
-  const wasteAnalysisData = [
-    { name: "Organic", value: collections.filter(c => c.wasteType === 'ORGANIC').length, color: "#FF8042" },
-    { name: "Recyclable", value: collections.filter(c => c.wasteType === 'RECYCLABLE').length, color: "#00C49F" },
-    { name: "Non-Recyclable", value: collections.filter(c => c.wasteType === 'NON_RECYCLABLE').length, color: "#FFBB28" },
-    { name: "Hazardous", value: collections.filter(c => c.wasteType === 'HAZARDOUS').length, color: "#FF6384" },
-  ];
+const wasteAnalysisData = [
+  { name: "Organic", value: collections ? collections.filter(c => c.wasteType === 'ORGANIC').length : 0, color: "#FF8042" },
+  { name: "Recyclable", value: collections ? collections.filter(c => c.wasteType === 'RECYCLABLE').length : 0, color: "#00C49F" },
+  { name: "Non-Recyclable", value: collections ? collections.filter(c => c.wasteType === 'NON_RECYCLABLE').length : 0, color: "#FFBB28" },
+  { name: "Hazardous", value: collections ? collections.filter(c => c.wasteType === 'HAZARDOUS').length : 0, color: "#FF6384" },
+];
 
   const collectionTrendsData = collections.reduce((acc, collection) => {
     const date = new Date(collection.date);
