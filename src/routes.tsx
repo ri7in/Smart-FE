@@ -12,6 +12,7 @@ import SpecialForm from "./Pages/SpecialForm";
 import ReviewFormPage from "./Pages/ReviewForm";
 import UserDashboard from "./Components/UserDashboard";
 import PaymentPage from "./Pages/PaymentPage";
+import IOTDevicePage from "./Pages/IOTDevicePage";
 
 const router = createBrowserRouter([
   {
@@ -53,6 +54,10 @@ const router = createBrowserRouter([
   {
     path: "/payment",
     element: <PaymentPage />,
+  },
+  {
+    path: "/iotdevice",
+    element: <IOTDevicePage />,
   },
 ]);
 
