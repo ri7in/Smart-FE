@@ -1,5 +1,5 @@
 import React from "react";
-import Dashboard from "../components/WasteManagementDashboard";
+import Dashboard from "../Components/WasteManagementDashboard";
 
 const ManagerPage: React.FC = () => {
   return (
