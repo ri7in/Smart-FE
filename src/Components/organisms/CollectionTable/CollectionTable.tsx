@@ -1,8 +1,13 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { CollectionDTO } from "../../../types";
-import TableHeaderCell from "../../atoms/TableHeaderCell/TableHeaderCell";
-import TableRow from "../../molecules/TableRow/TableRow";
+
+interface CollectionDTO {
+  id: number;
+  wasteBinId: number;
+  collectionTime: number[]; // Updated type to match the API response
+  weight: number;
+  fee: number;
+}
 
 const CollectionTable: React.FC = () => {
   const [collections, setCollections] = useState<CollectionDTO[]>([]);
@@ -17,6 +22,7 @@ const CollectionTable: React.FC = () => {
       setCollections(
         Array.isArray(response.data.results) ? response.data.results : []
       );
+      console.log("Huththo");
     } catch (error) {
       console.error("Error fetching collections:", error);
     }
@@ -37,35 +43,56 @@ const CollectionTable: React.FC = () => {
 
   return (
     <div>
-      <h2>Collection List</h2>
-      <table>
-        <thead>
-          <tr>
-            <TableHeaderCell label="ID" />
-            <TableHeaderCell label="Waste Bin ID" />
-            <TableHeaderCell label="Collection Time" />
-            <TableHeaderCell label="Weight" />
-            <TableHeaderCell label="Fee" />
-            <TableHeaderCell label="Actions" />
-          </tr>
-        </thead>
-        <tbody>
-          {collections.length === 0 ? (
-            <tr>
-              <td colSpan={6}>No collections found.</td>
+      <h2 className="text-2xl font-bold mb-4">Collection List</h2>
+      {collections.length === 0 ? (
+        <p>No collections available.</p>
+      ) : (
+        <table className="min-w-full bg-white rounded-lg overflow-hidden shadow-lg">
+          <thead>
+            <tr className="bg-green-500 text-white">
+              <th className="py-2 px-4">ID</th>
+              <th className="py-2 px-4">Waste Bin ID</th>
+              <th className="py-2 px-4">Collection Time</th>
+              <th className="py-2 px-4">Weight</th>
+              <th className="py-2 px-4">Fee</th>
+              <th className="py-2 px-4">Actions</th>
             </tr>
-          ) : (
-            collections.map((collection) => (
-              <TableRow
-                key={collection.id}
-                collection={collection}
-                onEdit={handleEdit}
-                onDelete={handleDelete}
-              />
-            ))
-          )}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {collections.map((collection) => (
+              <tr key={collection.id} className="hover:bg-gray-100">
+                <td className="border px-4 py-2">{collection.id}</td>
+                <td className="border px-4 py-2">{collection.wasteBinId}</td>
+                <td className="border px-4 py-2">
+                  {new Date(
+                    collection.collectionTime[0], // year
+                    collection.collectionTime[1] - 1, // month (0-based)
+                    collection.collectionTime[2], // day
+                    collection.collectionTime[3], // hours
+                    collection.collectionTime[4] // minutes
+                  ).toLocaleString()}
+                </td>
+                <td className="border px-4 py-2">{collection.weight}</td>
+                <td className="border px-4 py-2">{collection.fee}</td>
+                <td className="border px-4 py-2">
+                  <button
+                    className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 mr-2"
+                    onClick={() => handleEdit(collection)}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
+                    onClick={() => handleDelete(collection.id)}
+                  >
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
     </div>
   );
 };
