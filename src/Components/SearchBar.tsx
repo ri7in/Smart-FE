@@ -72,7 +72,7 @@ const SearchBar: React.FC = () => {
             {bill.amount ? bill.amount.toFixed(2) : "N/A"}
           </p>
           <p>
-            <strong>Status:</strong> {bill.isPaid ? "debited" : "not debited"}
+            <strong>Status:</strong> {bill.isPaid ? "not debited" : "debited"}
           </p>
           <p>
             {/* <strong>Waste Account ID:</strong> {bill.wasteAccount?.id ?? "N/A"} */}

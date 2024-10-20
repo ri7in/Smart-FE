@@ -1,4 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
+
+import inquiryService from "../services/inquiryService";
+import useWaste from "../hooks/useWaste";
+
 import {
   Home,
   Users,
@@ -9,9 +13,22 @@ import {
   Search,
   Settings,
   Trash2,
-  Send
+  Send,
+  UserRoundIcon,
 } from "lucide-react";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+} from "recharts";
 
 const UserDashboard = () => {
   const [activeTab, setActiveTab] = useState<string>("dashboard");
@@ -37,36 +54,49 @@ const UserDashboard = () => {
   ];
   const binHistory = [
     { date: "2024-10-01", wasteType: "Organic", level: 80, binNumber: "A001" },
-    { date: "2024-10-05", wasteType: "Recyclable", level: 30, binNumber: "A002" },
+    {
+      date: "2024-10-05",
+      wasteType: "Recyclable",
+      level: 30,
+      binNumber: "A002",
+    },
     { date: "2024-10-10", wasteType: "General", level: 60, binNumber: "A003" },
     { date: "2024-10-15", wasteType: "Organic", level: 90, binNumber: "A001" },
   ];
 
   const chartData = [
-    { name: 'Organic', amount: 400 },
-    { name: 'Recyclable', amount: 300 },
-    { name: 'General', amount: 200 },
+    { name: "Organic", amount: 400 },
+    { name: "Recyclable", amount: 300 },
+    { name: "General", amount: 200 },
   ];
 
   const pieChartData = [
-    { name: 'Bin A001', value: 75 },
-    { name: 'Bin A002', value: 50 },
-    { name: 'Bin A003', value: 25 },
+    { name: "Bin A001", value: 75 },
+    { name: "Bin A002", value: 50 },
+    { name: "Bin A003", value: 25 },
   ];
 
-  const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
+  const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
 
   const handleInquirySend = () => {
     // Here you would typically send the inquiry to a backend service
-    console.log("Sending inquiry:", { title: inquiryTitle, message: inquiryMessage });
+    console.log("Sending inquiry:", {
+      title: inquiryTitle,
+      message: inquiryMessage,
+    });
     setInquirySent(true);
     setInquiryTitle("");
     setInquiryMessage("");
     setTimeout(() => setInquirySent(false), 3000); // Reset after 3 seconds
   };
 
-
-const Sidebar = ({ activeTab, setActiveTab }: { activeTab: string; setActiveTab: (tab: string) => void }) => (
+  const Sidebar = ({
+    activeTab,
+    setActiveTab,
+  }: {
+    activeTab: string;
+    setActiveTab: (tab: string) => void;
+  }) => (
     <div className="bg-[#157145] text-white h-screen w-64 p-4 flex flex-col">
       <h1 className="text-2xl font-bold mb-8">SmartBin</h1>
       <nav className="flex-grow">
@@ -85,7 +115,7 @@ const Sidebar = ({ activeTab, setActiveTab }: { activeTab: string; setActiveTab:
       </nav>
     </div>
   );
-  
+
   const SidebarItem = ({
     icon,
     text,
@@ -107,21 +137,21 @@ const Sidebar = ({ activeTab, setActiveTab }: { activeTab: string; setActiveTab:
       <span className="ml-2">{text}</span>
     </div>
   );
-  
+
   const Header = () => {
     const [notificationsOpen, setNotificationsOpen] = useState(false);
     const [settingsOpen, setSettingsOpen] = useState(false);
-  
+
     const toggleNotifications = () => {
       setNotificationsOpen(!notificationsOpen);
       if (settingsOpen) setSettingsOpen(false);
     };
-  
+
     const toggleSettings = () => {
       setSettingsOpen(!settingsOpen);
       if (notificationsOpen) setNotificationsOpen(false);
     };
-  
+
     return (
       <header className="bg-[#157145] p-4 flex justify-between items-center">
         <div className="flex-1 max-w-2xl">
@@ -173,7 +203,7 @@ const Sidebar = ({ activeTab, setActiveTab }: { activeTab: string; setActiveTab:
       </header>
     );
   };
-  
+
   return (
     <div className="flex h-screen bg-gray-100">
       <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
@@ -219,15 +249,13 @@ const Sidebar = ({ activeTab, setActiveTab }: { activeTab: string; setActiveTab:
               onSend={handleInquirySend}
               sent={inquirySent}
             />
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-            <WasteBinHistoryTable history={binHistory} />
-            <div className="grid grid-rows-2 gap-6">
-              <WasteTypeChart data={chartData} />
-              <BinLevelPieChart data={pieChartData} colors={COLORS} />
-
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+              <WasteBinHistoryTable history={binHistory} />
+              <div className="grid grid-rows-2 gap-6">
+                <WasteTypeChart data={chartData} />
+                <BinLevelPieChart data={pieChartData} colors={COLORS} />
+              </div>
             </div>
-          </div>
-
           </div>
         </main>
       </div>
@@ -255,9 +283,19 @@ const StatCard = ({
   </div>
 );
 
-const BinLevelCard = ({ binNumber, level, currentFee }: { binNumber: string; level: number; currentFee: number }) => (
+const BinLevelCard = ({
+  binNumber,
+  level,
+  currentFee,
+}: {
+  binNumber: string;
+  level: number;
+  currentFee: number;
+}) => (
   <div className="bg-white p-4 rounded-lg shadow-md flex flex-col items-center justify-center transition-all duration-300 hover:shadow-lg">
-    <h3 className="text-sm font-medium text-gray-500 mb-2">Bin {binNumber} Level</h3>
+    <h3 className="text-sm font-medium text-gray-500 mb-2">
+      Bin {binNumber} Level
+    </h3>
     <div className="relative w-16 h-24 border-2 border-gray-300 rounded mb-2">
       <div
         className="absolute bottom-0 left-0 right-0 bg-green-500 transition-all duration-300"
@@ -301,34 +339,53 @@ Table.Cell = ({ children }: { children: React.ReactNode }) => (
 const WasteBinHistoryTable = ({
   history,
 }: {
-  history: Array<{ date: string; wasteType: string; level: number; binNumber: string }>;
-}) => (
-  <div className="bg-white p-4 rounded-lg shadow-md">
-    <h3 className="text-lg font-semibold mb-4">Waste Bin History</h3>
-    <Table>
-      <Table.Header>
-        <Table.Row>
-          <Table.Head>Date</Table.Head>
-          <Table.Head>Waste Bin</Table.Head>
-          <Table.Head>Waste Type</Table.Head>
-          <Table.Head>Level</Table.Head>
-        </Table.Row>
-      </Table.Header>
-      <Table.Body>
-        {history.map((entry, index) => (
-          <Table.Row key={index}>
-            <Table.Cell>{new Date(entry.date).toLocaleDateString()}</Table.Cell>
-            <Table.Cell>{entry.binNumber}</Table.Cell>
-            <Table.Cell>{entry.wasteType}</Table.Cell>
-            <Table.Cell>{entry.level}%</Table.Cell>
-          </Table.Row>
-        ))}
-      </Table.Body>
-    </Table>
-  </div>
-);
+  history: Array<{
+    date: string;
+    wasteType: string;
+    level: number;
+    binNumber: string;
+  }>;
+}) => { 
+  
+  const { data } = useWaste();
 
-const WasteTypeChart = ({ data }: { data: Array<{ name: string; amount: number }> }) => (
+  console.log("thu: ", data);
+
+  const newData = data?.results;
+
+  return (
+    <div className="bg-white p-4 rounded-lg shadow-md">
+      <h3 className="text-lg font-semibold mb-4">Waste Bin History</h3>
+      <Table>
+        <Table.Header>
+          <Table.Row>
+            <Table.Head>Date</Table.Head>
+            <Table.Head>Waste Bin</Table.Head>
+            <Table.Head>Waste Type</Table.Head>
+            <Table.Head>Level</Table.Head>
+          </Table.Row>
+        </Table.Header>
+        <Table.Body>
+          {newData?.map((entry, index) => (
+            <Table.Row key={index}>
+              <Table.Cell>
+                {new Date(entry.date).toLocaleDateString()}
+              </Table.Cell>
+              <Table.Cell>{entry.binNumber}</Table.Cell>
+              <Table.Cell>{entry.wasteType}</Table.Cell>
+              <Table.Cell>{entry.currentLevel}%</Table.Cell>
+            </Table.Row>
+          ))}
+        </Table.Body>
+      </Table>
+    </div>
+  );};
+
+const WasteTypeChart = ({
+  data,
+}: {
+  data: Array<{ name: string; amount: number }>;
+}) => (
   <div className="bg-white p-4 rounded-lg shadow-md">
     <h3 className="text-lg font-semibold mb-4">Waste Type Distribution</h3>
     <ResponsiveContainer width="100%" height={200}>
@@ -344,39 +401,39 @@ const WasteTypeChart = ({ data }: { data: Array<{ name: string; amount: number }
   </div>
 );
 
-const BinLevelPieChart = ({ data, colors }: { data: Array<{ name: string; value: number }>, colors: string[] }) => (
-    <div className="bg-white p-4 rounded-lg shadow-md">
-      <h3 className="text-lg font-semibold mb-4">Bin Level Distribution</h3>
-      <ResponsiveContainer width="100%" height={200}>
-        <PieChart>
-          <Pie
-            data={data}
-            cx="50%"
-            cy="50%"
-            labelLine={false}
-            outerRadius={80}
-            fill="#8884d8"
-            dataKey="value"
-          >
-            {data.map((entry, index) => (
-              <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
-            ))}
-          </Pie>
-          <Tooltip />
-          <Legend />
-        </PieChart>
-      </ResponsiveContainer>
-    </div>
-  );
-  
+const BinLevelPieChart = ({
+  data,
+  colors,
+}: {
+  data: Array<{ name: string; value: number }>;
+  colors: string[];
+}) => (
+  <div className="bg-white p-4 rounded-lg shadow-md">
+    <h3 className="text-lg font-semibold mb-4">Bin Level Distribution</h3>
+    <ResponsiveContainer width="100%" height={200}>
+      <PieChart>
+        <Pie
+          data={data}
+          cx="50%"
+          cy="50%"
+          labelLine={false}
+          outerRadius={80}
+          fill="#8884d8"
+          dataKey="value"
+        >
+          {data.map((entry, index) => (
+            <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
+          ))}
+        </Pie>
+        <Tooltip />
+        <Legend />
+      </PieChart>
+    </ResponsiveContainer>
+  </div>
+);
 
 const InquiryCard = ({
-  title,
-  message,
-  setTitle,
-  setMessage,
-  onSend,
-  sent
+  sent,
 }: {
   title: string;
   message: string;
@@ -384,39 +441,57 @@ const InquiryCard = ({
   setMessage: (message: string) => void;
   onSend: () => void;
   sent: boolean;
-}) => (
-  <div className="bg-white p-4 rounded-lg shadow-md">
-    <h3 className="text-lg font-semibold mb-4">Raise an Inquiry</h3>
-    {sent ? (
-      <div className="text-green-600 font-semibold">Inquiry raised successfully!</div>
-    ) : (
-      <>
-        <input
-          type="text"
-          placeholder="Inquiry Title"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          className="w-full p-2 mb-4 border rounded"
-        />
-        <textarea
-          placeholder="Inquiry Message"
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          className="w-full p-2 mb-4 border rounded h-24"
-        />
-        <button
-          onClick={onSend}
-          className="bg-green-500 text-white px-4 py-2 rounded flex items-center"
-        >
-          <Send size={16} className="mr-2" />
-          Send Inquiry
-        </button>
-      </>
-    )}
-  </div>
-);
+}) => {
+  const [title, setTitle] = useState("");
+
+  const [message, setMessage] = useState("");
+
+  const handleSubmit = () => {
+
+    const formData = { subject: title, message, createdAt: "2024-08-17", userId: 1 };
+
+    console.log("Sending inquiry:", formData);
+
+    inquiryService.Create(formData).then(() => {
+      console.log("Inquiry sent successfully!");
+    });
+  };
+
+  return (
+    <div className="bg-white p-4 rounded-lg shadow-md">
+      <h3 className="text-lg font-semibold mb-4">Raise an Inquiry</h3>
+      {sent ? (
+        <div className="text-green-600 font-semibold">
+          Inquiry raised successfully!
+        </div>
+      ) : (
+        <>
+          <input
+            type="text"
+            placeholder="Inquiry Title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            className="w-full p-2 mb-4 border rounded"
+          />
+          <textarea
+            placeholder="Inquiry Message"
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            className="w-full p-2 mb-4 border rounded h-24"
+          />
+          <button
+            onClick={() => handleSubmit()}
+            className="bg-green-500 text-white px-4 py-2 rounded flex items-center"
+          >
+            <Send size={16} className="mr-2" />
+            Send Inquiry
+          </button>
+        </>
+      )}
+    </div>
+  );
+};
 
 export default UserDashboard;
 
 //rwar
-
